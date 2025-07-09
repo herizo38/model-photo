@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { supabase } from '../../lib/supabase';
+import { supabase } from "../../../lib/supabase";
 import { toast } from 'react-hot-toast';
 import { Award, Camera, Heart, Star } from 'lucide-react';
 
@@ -19,14 +19,10 @@ const AboutSettings: React.FC = () => {
     const [achievements, setAchievements] = useState([{ id: uuidv4(), image: '', title: '', desc: '' }]);
     const [achForm, setAchForm] = useState({ image: '', title: '', desc: '' });
     const [editingAchIndex, setEditingAchIndex] = useState<number | null>(null);
-    const [loadingAch, setLoadingAch] = useState(false);
-    const fileInputAchRef = useRef<HTMLInputElement>(null);
     // Specialties
     const [specialties, setSpecialties] = useState([{ id: uuidv4(), image: '', title: '', desc: '' }]);
     const [specForm, setSpecForm] = useState({ image: '', title: '', desc: '' });
     const [editingSpecIndex, setEditingSpecIndex] = useState<number | null>(null);
-    const [loadingSpec, setLoadingSpec] = useState(false);
-    const fileInputSpecRef = useRef<HTMLInputElement>(null);
     // Stats
     const [aboutStats, setAboutStats] = useState([{ id: uuidv4(), icon: 'Camera', number: '', label: '', color: '#fff', size: '2rem' }]);
     const [statForm, setStatForm] = useState({ icon: 'Camera', number: '', label: '', color: '#fff', size: '2rem' });
@@ -96,7 +92,7 @@ const AboutSettings: React.FC = () => {
                 <h3 className="text-xl font-bold text-gold mb-4">Réalisations (Achievements)</h3>
                 <form onSubmit={e => {
                     e.preventDefault();
-                    let list = [...achievements];
+                    const list = [...achievements];
                     if (editingAchIndex !== null) {
                         list[editingAchIndex] = { ...achForm, id: list[editingAchIndex].id };
                     } else {
@@ -140,7 +136,7 @@ const AboutSettings: React.FC = () => {
                 <h3 className="text-xl font-bold text-gold mb-4">Specialties</h3>
                 <form onSubmit={e => {
                     e.preventDefault();
-                    let list = [...specialties];
+                    const list = [...specialties];
                     if (editingSpecIndex !== null) {
                         list[editingSpecIndex] = { ...specForm, id: list[editingSpecIndex].id };
                     } else {
@@ -184,7 +180,7 @@ const AboutSettings: React.FC = () => {
                 <h3 className="text-xl font-bold text-gold mb-4">Statistiques clés</h3>
                 <form onSubmit={e => {
                     e.preventDefault();
-                    let list = [...aboutStats];
+                    const list = [...aboutStats];
                     if (editingStatIndex !== null) {
                         list[editingStatIndex] = { ...statForm, id: list[editingStatIndex].id };
                     } else {
