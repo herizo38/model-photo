@@ -2,7 +2,11 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Instagram, Youtube, Twitter, Facebook } from 'lucide-react';
 
-const SocialMedia: React.FC = () => {
+interface SocialMediaProps {
+  hero?: boolean;
+}
+
+const SocialMedia: React.FC<SocialMediaProps> = ({ hero }) => {
   const socialLinks = [
     { icon: Instagram, url: 'https://instagram.com', label: 'Instagram' },
     { icon: Youtube, url: 'https://youtube.com', label: 'YouTube' },
@@ -10,6 +14,28 @@ const SocialMedia: React.FC = () => {
     { icon: Facebook, url: 'https://facebook.com', label: 'Facebook' },
   ];
 
+  if (hero) {
+    return (
+      <div className="flex flex-col items-center gap-2 bg-transparent p-0">
+        <span className="text-gold font-semibold text-lg mb-1">Follow me</span>
+        <div className="flex gap-4">
+          {socialLinks.map((social) => (
+            <motion.a
+              key={social.label}
+              href={social.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.2 }}
+              className="text-gold hover:text-white transition-colors"
+            >
+              <social.icon className="w-8 h-8" />
+            </motion.a>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  // Ancienne présentation
   return (
     <section className="py-20 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -31,23 +57,18 @@ const SocialMedia: React.FC = () => {
             Stay updated with my latest work and behind-the-scenes content
           </motion.p>
         </div>
-
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {socialLinks.map((social, index) => (
+          {socialLinks.map((social) => (
             <motion.a
               key={social.label}
               href={social.url}
               target="_blank"
               rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="group flex flex-col items-center space-y-4 p-6 bg-gray-900 rounded-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105"
+              whileHover={{ scale: 1.2 }}
+              className="flex flex-col items-center bg-gray-900 p-6 rounded-lg shadow-lg hover:bg-gold/10 transition-colors"
             >
-              <div className="p-4 bg-gold/10 rounded-full group-hover:bg-gold/20 transition-colors">
-                <social.icon className="w-8 h-8 text-gold" />
-              </div>
-              <span className="text-white font-medium">{social.label}</span>
+              <span className="mb-2 text-gold"><social.icon className="w-8 h-8" /></span>
+              <span className="text-white font-semibold">{social.label}</span>
             </motion.a>
           ))}
         </div>

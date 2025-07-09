@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
-import SocialMedia from './SocialMedia';
+import SocialMediaHero from './SocialMediaHero';
 
 const Hero: React.FC = () => {
   const { t } = useLanguage();
@@ -131,8 +131,7 @@ const Hero: React.FC = () => {
           </motion.p>
           {showSocials && (
             <div className="flex justify-center gap-6 mb-8">
-              {/* Ici, le composant ou les icônes réseaux sociaux existants */}
-              <SocialMedia />
+              <SocialMediaHero />
             </div>
           )}
           <motion.div
