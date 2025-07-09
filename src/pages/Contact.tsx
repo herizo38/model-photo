@@ -1,10 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
 import ContactForm from '../components/ContactForm';
+import { supabase } from '../lib/supabase';
 
 const Contact: React.FC = () => {
   const { t } = useLanguage();
+  const [contactText, setContactText] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      setLoading(true);
+      try {
+        const { data } = await supabase
+          .from('settings')
+          .select('value')
+          .eq('key', 'contact_text')
+          .single();
+        setContactText(data?.value || '');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchContent();
+  }, []);
 
   return (
     <div className="min-h-screen bg-black pt-20">
@@ -18,14 +38,18 @@ const Contact: React.FC = () => {
           >
             {t('contact')}
           </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-xl text-gray-300"
-          >
-            Ready to create something amazing together?
-          </motion.p>
+          {loading ? (
+            <div className="text-gray-400">Chargement...</div>
+          ) : (
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-xl text-gray-300 whitespace-pre-line"
+            >
+              {contactText || 'Prêt à créer quelque chose d’exceptionnel ensemble ?'}
+            </motion.p>
+          )}
         </div>
 
         <ContactForm />

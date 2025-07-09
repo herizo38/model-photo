@@ -1,12 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import PhotoGallery from './PhotoGallery';
+import { supabase } from '../lib/supabase';
 
 const FeaturedPhotos: React.FC = () => {
   const { t } = useLanguage();
+  const [title, setTitle] = useState('');
+  const [titleColor, setTitleColor] = useState('#fff');
+  const [titleSize, setTitleSize] = useState('3rem');
+  const [desc, setDesc] = useState('');
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const { data } = await supabase
+        .from('settings')
+        .select('key, value')
+        .in('key', ['featured_title', 'featured_title_color', 'featured_title_size', 'featured_desc']);
+      setTitle(data?.find((row) => row.key === 'featured_title')?.value || '');
+      setTitleColor(data?.find((row) => row.key === 'featured_title_color')?.value || '#fff');
+      setTitleSize(data?.find((row) => row.key === 'featured_title_size')?.value || '3rem');
+      setDesc(data?.find((row) => row.key === 'featured_desc')?.value || '');
+    };
+    fetchSettings();
+  }, []);
 
   return (
     <section className="py-20 bg-gray-900">
@@ -16,9 +34,10 @@ const FeaturedPhotos: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-4xl md:text-5xl font-bold text-white mb-4"
+            style={{ color: titleColor, fontSize: titleSize }}
+            className="font-bold mb-4"
           >
-            {t('featured_photos')}
+            {title || t('featured_photos')}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -26,11 +45,11 @@ const FeaturedPhotos: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-xl text-gray-300"
           >
-            {t('latest_work')}
+            {desc || t('latest_work')}
           </motion.p>
         </div>
 
-        <PhotoGallery 
+        <PhotoGallery
           showFilters={false}
           limit={6}
         />

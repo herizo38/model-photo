@@ -21,12 +21,12 @@ const AdminLogin: React.FC = () => {
     try {
       const { error } = await signIn(data.email, data.password);
       if (error) {
-        toast.error('Invalid credentials');
+        toast.error('Identifiants invalides');
       } else {
-        toast.success('Welcome back!');
+        toast.success('Bienvenue !');
       }
-    } catch (error) {
-      toast.error('Login failed');
+    } catch {
+      toast.error('Échec de la connexion');
     } finally {
       setIsLoading(false);
     }
@@ -46,28 +46,28 @@ const AdminLogin: React.FC = () => {
               <Lock className="w-8 h-8 text-gold" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">Admin Access</h1>
-          <p className="text-gray-400">Sign in to manage your portfolio</p>
+          <h1 className="text-2xl font-bold text-white mb-2">Accès Administrateur</h1>
+          <p className="text-gray-400">Connectez-vous pour gérer votre portfolio</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Email Address
+              Adresse e-mail
             </label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
-                {...register('email', { 
-                  required: 'Email is required',
+                {...register('email', {
+                  required: 'L\'e-mail est requis',
                   pattern: {
                     value: /^\S+@\S+$/i,
-                    message: 'Invalid email address'
+                    message: 'Adresse e-mail invalide'
                   }
                 })}
                 type="email"
                 className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
-                placeholder="admin@example.com"
+                placeholder="admin@exemple.com"
               />
             </div>
             {errors.email && (
@@ -77,7 +77,7 @@ const AdminLogin: React.FC = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Password
+              Mot de passe
             </label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -85,7 +85,7 @@ const AdminLogin: React.FC = () => {
                 {...register('password', { required: 'Password is required' })}
                 type={showPassword ? 'text' : 'password'}
                 className="w-full pl-10 pr-12 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
-                placeholder="Enter your password"
+                placeholder="Entrez votre mot de passe"
               />
               <button
                 type="button"
@@ -96,7 +96,7 @@ const AdminLogin: React.FC = () => {
               </button>
             </div>
             {errors.password && (
-              <p className="mt-1 text-sm text-red-400">{errors.password.message}</p>
+              <p className="mt-1 text-sm text-red-400">{errors.password.message || 'Le mot de passe est requis'}</p>
             )}
           </div>
 
@@ -105,13 +105,13 @@ const AdminLogin: React.FC = () => {
             disabled={isLoading}
             className="w-full py-3 bg-gold hover:bg-gold/90 disabled:bg-gold/50 text-black font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 disabled:transform-none"
           >
-            {isLoading ? 'Signing in...' : 'Sign In'}
+            {isLoading ? 'Connexion en cours...' : 'Se connecter'}
           </button>
         </form>
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-400">
-            Demo credentials: admin@example.com / admin123
+            Identifiants de démonstration : admin@exemple.com / admin123
           </p>
         </div>
       </motion.div>

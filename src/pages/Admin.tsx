@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  LayoutDashboard, 
-  Camera, 
-  MessageSquare, 
-  BarChart3, 
-  Settings as SettingsIcon, 
+import {
+  LayoutDashboard,
+  Camera,
+  MessageSquare,
+  BarChart3,
+  Settings as SettingsIcon,
   LogOut,
   Shield
 } from 'lucide-react';
@@ -45,11 +45,11 @@ const Admin: React.FC = () => {
   }
 
   const navigation = [
-    { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
+    { id: 'dashboard', name: 'Tableau de bord', icon: LayoutDashboard },
     { id: 'photos', name: 'Photos', icon: Camera },
     { id: 'categories', name: 'Catégories', icon: SettingsIcon },
     { id: 'messages', name: 'Messages', icon: MessageSquare },
-    { id: 'analytics', name: 'Analytics', icon: BarChart3 },
+    { id: 'analytics', name: 'Statistiques', icon: BarChart3 },
     { id: 'settings', name: 'Paramètres', icon: SettingsIcon },
   ];
 
@@ -80,7 +80,7 @@ const Admin: React.FC = () => {
           {/* Logo */}
           <div className="flex items-center space-x-2 p-6 border-b border-gray-700">
             <Shield className="w-8 h-8 text-gold" />
-            <span className="text-xl font-bold text-white">Admin Panel</span>
+            <span className="text-xl font-bold text-white">Espace Admin</span>
           </div>
 
           {/* Navigation */}
@@ -89,11 +89,10 @@ const Admin: React.FC = () => {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-colors ${
-                  activeTab === item.id
-                    ? 'bg-gold text-black'
-                    : 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                }`}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-colors ${activeTab === item.id
+                  ? 'bg-gold text-black'
+                  : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                  }`}
               >
                 <item.icon className="w-5 h-5" />
                 <span>{item.name}</span>
@@ -113,7 +112,7 @@ const Admin: React.FC = () => {
                 <p className="text-white text-sm font-medium truncate">
                   {user.email}
                 </p>
-                <p className="text-gray-400 text-xs">Administrator</p>
+                <p className="text-gray-400 text-xs">Administrateur</p>
               </div>
             </div>
             <button
@@ -121,7 +120,7 @@ const Admin: React.FC = () => {
               className="w-full flex items-center space-x-2 px-4 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors"
             >
               <LogOut className="w-4 h-4" />
-              <span>Sign Out</span>
+              <span>Déconnexion</span>
             </button>
           </div>
         </div>

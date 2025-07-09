@@ -5,6 +5,7 @@ import { Send, Phone, Mail, MapPin } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
+import { useEffect, useState } from 'react';
 
 interface FormData {
   name: string;
@@ -16,6 +17,33 @@ interface FormData {
 const ContactForm: React.FC = () => {
   const { t } = useLanguage();
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>();
+  const [contactPhone, setContactPhone] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [contactAddress, setContactAddress] = useState('');
+  const [contactLinks, setContactLinks] = useState<{ id: string; name: string; url: string }[]>([]);
+
+  useEffect(() => {
+    const fetchContactInfos = async () => {
+      try {
+        const { data } = await supabase
+          .from('settings')
+          .select('key, value')
+          .in('key', [
+            'contact_phone', 'contact_email', 'contact_address', 'contact_links'
+          ]);
+        setContactPhone(data?.find((row) => row.key === 'contact_phone')?.value || '');
+        setContactEmail(data?.find((row) => row.key === 'contact_email')?.value || '');
+        setContactAddress(data?.find((row) => row.key === 'contact_address')?.value || '');
+        // Liens dynamiques
+        let links = [];
+        try {
+          links = JSON.parse(data?.find((row) => row.key === 'contact_links')?.value || '[]');
+        } catch { }
+        setContactLinks(Array.isArray(links) ? links : []);
+      } catch { }
+    };
+    fetchContactInfos();
+  }, []);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -31,12 +59,10 @@ const ContactForm: React.FC = () => {
         }]);
 
       if (error) throw error;
-      
+
       toast.success('Message sent successfully!');
       reset();
-    } catch (error) {
-      toast.error('Failed to send message. Please try again.');
-    }
+    } catch { }
   };
 
   return (
@@ -70,27 +96,27 @@ const ContactForm: React.FC = () => {
             className="space-y-8"
           >
             <div className="bg-black/50 p-8 rounded-lg">
-              <h3 className="text-2xl font-bold text-white mb-6">Get in Touch</h3>
+              <h3 className="text-2xl font-bold text-white mb-6">{t('get_in_touch') || 'Get in Touch'}</h3>
               <div className="space-y-4">
                 <div className="flex items-center space-x-4">
                   <Phone className="w-6 h-6 text-gold" />
                   <div>
-                    <p className="text-white font-medium">Phone</p>
-                    <p className="text-gray-300">+1 (555) 123-4567</p>
+                    <p className="text-white font-medium">{t('phone') || 'Phone'}</p>
+                    <p className="text-gray-300">{contactPhone || '+1 (555) 123-4567'}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
                   <Mail className="w-6 h-6 text-gold" />
                   <div>
-                    <p className="text-white font-medium">Email</p>
-                    <p className="text-gray-300">hello@modelportfolio.com</p>
+                    <p className="text-white font-medium">{t('email') || 'Email'}</p>
+                    <p className="text-gray-300">{contactEmail || 'hello@modelportfolio.com'}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
                   <MapPin className="w-6 h-6 text-gold" />
                   <div>
-                    <p className="text-white font-medium">Location</p>
-                    <p className="text-gray-300">New York, NY</p>
+                    <p className="text-white font-medium">{t('location') || 'Location'}</p>
+                    <p className="text-gray-300">{contactAddress || 'New York, NY'}</p>
                   </div>
                 </div>
               </div>
@@ -98,22 +124,17 @@ const ContactForm: React.FC = () => {
 
             {/* Quick Contact Options */}
             <div className="space-y-4">
-              <a
-                href="https://wa.me/15551234567"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full p-4 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-center font-medium"
-              >
-                WhatsApp
-              </a>
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full p-4 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors text-center font-medium"
-              >
-                Instagram DM
-              </a>
+              {contactLinks.length > 0 && contactLinks.map(link => (
+                <a
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full p-4 bg-gold/20 hover:bg-gold/40 text-white rounded-lg transition-colors text-center font-medium"
+                >
+                  {link.name}
+                </a>
+              ))}
             </div>
           </motion.div>
 
@@ -146,7 +167,7 @@ const ContactForm: React.FC = () => {
                   {t('email')}
                 </label>
                 <input
-                  {...register('email', { 
+                  {...register('email', {
                     required: 'Email is required',
                     pattern: {
                       value: /^\S+@\S+$/i,

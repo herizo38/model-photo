@@ -8,8 +8,23 @@ import Gallery from './pages/Gallery';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
+import { useEffect } from 'react';
+import { supabase } from './lib/supabase';
 
 function App() {
+  useEffect(() => {
+    const fetchColors = async () => {
+      const { data } = await supabase
+        .from('settings')
+        .select('key, value')
+        .in('key', ['primary_color', 'button_color']);
+      const primary = data?.find((row) => row.key === 'primary_color')?.value || '#d4af37';
+      const button = data?.find((row) => row.key === 'button_color')?.value || '#d4af37';
+      document.documentElement.style.setProperty('--color-primary', primary);
+      document.documentElement.style.setProperty('--color-button', button);
+    };
+    fetchColors();
+  }, []);
   return (
     <LanguageProvider>
       <Router>
@@ -24,7 +39,7 @@ function App() {
               <Route path="/admin" element={<Admin />} />
             </Routes>
           </main>
-          <Toaster 
+          <Toaster
             position="bottom-right"
             toastOptions={{
               style: {

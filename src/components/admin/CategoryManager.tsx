@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Save, 
-  X, 
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Save,
+  X,
   Palette,
   Tag
 } from 'lucide-react';
@@ -59,7 +59,7 @@ const CategoryManager: React.FC = () => {
 
       if (error) throw error;
       setCategories(data || []);
-    } catch (error) {
+    } catch {
       toast.error('Erreur lors du chargement des catégories');
     } finally {
       setLoading(false);
@@ -125,7 +125,7 @@ const CategoryManager: React.FC = () => {
 
       fetchCategories();
       closeModal();
-    } catch (error) {
+    } catch {
       toast.error('Erreur lors de la sauvegarde');
     }
   };
@@ -142,7 +142,7 @@ const CategoryManager: React.FC = () => {
       if (error) throw error;
       toast.success('Catégorie supprimée avec succès');
       fetchCategories();
-    } catch (error) {
+    } catch {
       toast.error('Erreur lors de la suppression');
     }
   };
@@ -185,14 +185,14 @@ const CategoryManager: React.FC = () => {
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center space-x-3">
-                  <div 
+                  <div
                     className="w-6 h-6 rounded-full"
                     style={{ backgroundColor: category.color }}
                   />
                   <div>
                     <h3 className="text-white font-semibold">{category.name}</h3>
                     <div className="text-sm text-gray-400">
-                      <span>FR: {category.name_fr}</span> • <span>EN: {category.name_en}</span>
+                      <span>FR : {category.name_fr}</span> • <span>EN : {category.name_en}</span>
                     </div>
                   </div>
                 </div>
@@ -211,17 +211,17 @@ const CategoryManager: React.FC = () => {
                   </button>
                 </div>
               </div>
-              
+
               {category.description && (
                 <p className="text-gray-300 text-sm mb-4">{category.description}</p>
               )}
-              
+
               <div className="text-xs text-gray-500">
                 Créée le {new Date(category.created_at).toLocaleDateString('fr-FR')}
               </div>
             </motion.div>
           ))}
-          
+
           {categories.length === 0 && (
             <div className="col-span-full text-center py-12">
               <Tag className="w-16 h-16 text-gray-400 mx-auto mb-4" />

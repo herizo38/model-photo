@@ -1,23 +1,74 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Award, Camera, Heart, Star } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { supabase } from '../lib/supabase';
 
 const About: React.FC = () => {
   const { t } = useLanguage();
+  const [aboutText, setAboutText] = useState('');
+  const [bioLink, setBioLink] = useState('');
+  const [journey, setJourney] = useState('');
+  const [achievements, setAchievements] = useState<{ id: string, image: string, title: string, desc: string }[]>([]);
+  const [specialties, setSpecialties] = useState<{ id: string, image: string, title: string, desc: string }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [aboutStats, setAboutStats] = useState<{ id: string; icon: 'Camera' | 'Award' | 'Heart' | 'Star'; number: string; label: string; color?: string; size?: string }[]>([]);
+  const [cta, setCta] = useState({ title: '', desc: '', btn: '', btnLink: '', btnColor: '#d4af37', titleSize: '2rem' });
 
-  const stats = [
-    { icon: Camera, number: '500+', label: 'Photo Shoots' },
-    { icon: Award, number: '15+', label: 'Awards Won' },
-    { icon: Heart, number: '1M+', label: 'Social Followers' },
-    { icon: Star, number: '50+', label: 'Brand Collaborations' },
-  ];
+  useEffect(() => {
+    const fetchContent = async () => {
+      setLoading(true);
+      try {
+        const { data } = await supabase
+          .from('settings')
+          .select('key, value')
+          .in('key', [
+            'about_text', 'bio_link', 'about_journey', 'about_achievements', 'about_specialties',
+            'about_stats', 'about_cta_title', 'about_cta_desc', 'about_cta_btn', 'about_cta_btn_link', 'about_cta_btn_color', 'about_cta_title_size'
+          ]);
+        if (data) {
+          setAboutText(data.find((row) => row.key === 'about_text')?.value || '');
+          setBioLink(data.find((row) => row.key === 'bio_link')?.value || '');
+          setJourney(data.find((row) => row.key === 'about_journey')?.value || '');
+          // Achievements
+          let achievementsArr = [];
+          try {
+            achievementsArr = JSON.parse(data.find((row) => row.key === 'about_achievements')?.value || '[]');
+          } catch { achievementsArr = []; }
+          setAchievements(Array.isArray(achievementsArr) ? achievementsArr : []);
+          // Specialties
+          let specialtiesArr = [];
+          try {
+            specialtiesArr = JSON.parse(data.find((row) => row.key === 'about_specialties')?.value || '[]');
+          } catch { specialtiesArr = []; }
+          setSpecialties(Array.isArray(specialtiesArr) ? specialtiesArr : []);
+          // Stats
+          let statsArr = [];
+          try {
+            statsArr = JSON.parse(data.find((row) => row.key === 'about_stats')?.value || '[]');
+          } catch { statsArr = []; }
+          setAboutStats(Array.isArray(statsArr) ? statsArr : []);
+          // CTA
+          setCta({
+            title: data.find((row) => row.key === 'about_cta_title')?.value || '',
+            desc: data.find((row) => row.key === 'about_cta_desc')?.value || '',
+            btn: data.find((row) => row.key === 'about_cta_btn')?.value || '',
+            btnLink: data.find((row) => row.key === 'about_cta_btn_link')?.value || '',
+            btnColor: data.find((row) => row.key === 'about_cta_btn_color')?.value || '#d4af37',
+            titleSize: data.find((row) => row.key === 'about_cta_title_size')?.value || '2rem',
+          });
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchContent();
+  }, []);
 
   return (
     <div className="min-h-screen bg-black pt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="text-center mb-16">
+      <div className="max-w-5xl mx-auto px-4 py-12">
+        <div className="text-center mb-12">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -26,17 +77,33 @@ const About: React.FC = () => {
           >
             {t('about')}
           </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-xl text-gray-300"
-          >
-            Professional model with a passion for art and storytelling
-          </motion.p>
+          {loading ? (
+            <div className="text-gray-400">Chargement...</div>
+          ) : (
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-xl text-gray-300 whitespace-pre-line"
+            >
+              {aboutText || 'Bienvenue sur mon portfolio professionnel.'}
+            </motion.p>
+          )}
+          {bioLink && !loading && (
+            <div className="mt-6">
+              <a
+                href={bioLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-6 py-2 bg-gold text-black font-semibold rounded-full hover:bg-gold/90 transition"
+              >
+                Voir mon lien bio
+              </a>
+            </div>
+          )}
         </div>
 
-        {/* About Content */}
+        {/* My Journey */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -44,45 +111,27 @@ const About: React.FC = () => {
             transition={{ duration: 0.6 }}
             className="space-y-6"
           >
-            <div className="bg-gray-900 p-8 rounded-lg">
-              <h2 className="text-3xl font-bold text-white mb-6">My Journey</h2>
-              <div className="space-y-4 text-gray-300">
-                <p>
-                  With over 8 years of experience in the modeling industry, I've had the privilege 
-                  of working with renowned photographers, fashion designers, and brands worldwide.
-                </p>
-                <p>
-                  My journey began at the age of 16 when I was discovered by a talent scout in Paris. 
-                  Since then, I've walked runways for major fashion houses, graced magazine covers, 
-                  and collaborated with luxury brands.
-                </p>
-                <p>
-                  What sets me apart is my ability to tell stories through every pose, every expression, 
-                  and every photograph. I believe that modeling is not just about beauty—it's about 
-                  connecting with people and conveying emotions.
-                </p>
+            <div className="bg-gray-900 p-8 rounded-lg shadow-lg">
+              <h2 className="text-3xl font-bold text-white mb-6">Mon parcours</h2>
+              <div className="space-y-4 text-gray-300 whitespace-pre-line">
+                {loading ? 'Chargement...' : (journey || 'Racontez votre histoire ici.')}
               </div>
             </div>
 
-            <div className="bg-gray-900 p-8 rounded-lg">
-              <h3 className="text-2xl font-bold text-white mb-4">Specialties</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-4 bg-gold/10 rounded-lg">
-                  <h4 className="font-semibold text-gold mb-2">Fashion</h4>
-                  <p className="text-sm text-gray-300">Editorial & Commercial</p>
-                </div>
-                <div className="text-center p-4 bg-gold/10 rounded-lg">
-                  <h4 className="font-semibold text-gold mb-2">Beauty</h4>
-                  <p className="text-sm text-gray-300">Cosmetics & Skincare</p>
-                </div>
-                <div className="text-center p-4 bg-gold/10 rounded-lg">
-                  <h4 className="font-semibold text-gold mb-2">Portrait</h4>
-                  <p className="text-sm text-gray-300">Studio & Lifestyle</p>
-                </div>
-                <div className="text-center p-4 bg-gold/10 rounded-lg">
-                  <h4 className="font-semibold text-gold mb-2">Commercial</h4>
-                  <p className="text-sm text-gray-300">Brand Campaigns</p>
-                </div>
+            <div className="bg-gray-900 p-8 rounded-lg shadow-lg">
+              <h3 className="text-2xl font-bold text-white mb-4">Spécialités</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {loading ? (
+                  <div className="text-gray-400">Chargement...</div>
+                ) : specialties.length === 0 ? (
+                  <div className="text-gray-400">Aucune spécialité renseignée.</div>
+                ) : specialties.map((spec) => (
+                  <div key={spec.id} className="text-center p-4 bg-gold/10 rounded-lg flex flex-col items-center">
+                    <img src={spec.image || 'https://via.placeholder.com/400x250?text=Image'} alt={spec.title} className="w-full h-24 object-cover rounded mb-2" />
+                    <h4 className="font-semibold text-gold mb-2">{spec.title}</h4>
+                    <p className="text-sm text-gray-300">{spec.desc}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </motion.div>
@@ -93,30 +142,22 @@ const About: React.FC = () => {
             transition={{ duration: 0.6 }}
             className="space-y-6"
           >
-            <div className="bg-gray-900 p-8 rounded-lg">
-              <h3 className="text-2xl font-bold text-white mb-6">Recent Achievements</h3>
+            <div className="bg-gray-900 p-8 rounded-lg shadow-lg">
+              <h3 className="text-2xl font-bold text-white mb-6">Réalisations récentes</h3>
               <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <Award className="w-6 h-6 text-gold mt-1" />
-                  <div>
-                    <h4 className="font-semibold text-white">Model of the Year 2023</h4>
-                    <p className="text-sm text-gray-300">Fashion Awards International</p>
+                {loading ? (
+                  <div className="text-gray-400">Chargement...</div>
+                ) : achievements.length === 0 ? (
+                  <div className="text-gray-400">Aucune réalisation renseignée.</div>
+                ) : achievements.map((ach) => (
+                  <div key={ach.id} className="flex items-start space-x-3">
+                    <img src={ach.image || 'https://via.placeholder.com/80x80?text=Image'} alt={ach.title} className="w-14 h-14 object-cover rounded mr-2" />
+                    <div>
+                      <h4 className="font-semibold text-white">{ach.title}</h4>
+                      {ach.desc && <p className="text-sm text-gray-300">{ach.desc}</p>}
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <Award className="w-6 h-6 text-gold mt-1" />
-                  <div>
-                    <h4 className="font-semibold text-white">Vogue Cover Feature</h4>
-                    <p className="text-sm text-gray-300">September 2023 Issue</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <Award className="w-6 h-6 text-gold mt-1" />
-                  <div>
-                    <h4 className="font-semibold text-white">Brand Ambassador</h4>
-                    <p className="text-sm text-gray-300">Luxury Fashion House</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 
@@ -133,21 +174,27 @@ const About: React.FC = () => {
 
         {/* Statistics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="text-center bg-gray-900 p-6 rounded-lg"
-            >
-              <div className="flex justify-center mb-4">
-                <stat.icon className="w-8 h-8 text-gold" />
-              </div>
-              <h3 className="text-3xl font-bold text-white mb-2">{stat.number}</h3>
-              <p className="text-gray-300">{stat.label}</p>
-            </motion.div>
-          ))}
+          {aboutStats.length === 0 ? (
+            <div className="col-span-4 text-center text-gray-400">Aucune statistique renseignée.</div>
+          ) : aboutStats.map((stat, index) => {
+            const icons = { Camera, Award, Heart, Star };
+            const Icon = icons[stat.icon] || Camera;
+            return (
+              <motion.div
+                key={stat.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="text-center bg-gray-900 p-6 rounded-lg"
+              >
+                <div className="flex justify-center mb-4">
+                  <Icon style={{ color: stat.color || '#d4af37', fontSize: stat.size || '2rem' }} />
+                </div>
+                <h3 className="font-bold mb-2" style={{ color: stat.color || '#d4af37', fontSize: stat.size || '2rem' }}>{stat.number}</h3>
+                <p className="text-gray-300">{stat.label}</p>
+              </motion.div>
+            );
+          })}
         </div>
 
         {/* Call to Action */}
@@ -157,13 +204,25 @@ const About: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="text-center bg-gray-900 p-12 rounded-lg"
         >
-          <h2 className="text-3xl font-bold text-white mb-4">Ready to Work Together?</h2>
+          <h2 className="font-bold mb-4" style={{ color: '#fff', fontSize: cta.titleSize }}>{cta.title || 'Ready to Work Together?'}</h2>
           <p className="text-xl text-gray-300 mb-8">
-            Let's create something extraordinary together. I'm always open to new and exciting projects.
+            {cta.desc || "Let's create something extraordinary together. I'm always open to new and exciting projects."}
           </p>
-          <button className="px-8 py-3 bg-gold hover:bg-gold/90 text-black font-semibold rounded-full transition-all duration-200 transform hover:scale-105">
-            Get in Touch
-          </button>
+          {cta.btn && (
+            <a
+              href={cta.btnLink || '#'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block"
+            >
+              <button
+                style={{ backgroundColor: cta.btnColor, color: '#000' }}
+                className="px-8 py-3 font-semibold rounded-full transition-all duration-200 transform hover:scale-105"
+              >
+                {cta.btn}
+              </button>
+            </a>
+          )}
         </motion.div>
       </div>
     </div>

@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { supabase } from '../lib/supabase';
+import SocialMedia from './SocialMedia';
 
 const Hero: React.FC = () => {
   const { t } = useLanguage();
   const [currentSlide, setCurrentSlide] = useState(0);
-
-  const slides = [
+  const [heroTitle, setHeroTitle] = useState('');
+  const [heroSubtitle, setHeroSubtitle] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [slides, setSlides] = useState([
     {
       image: 'https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?auto=compress&cs=tinysrgb&w=1920',
       title: 'Fashion Editorial',
@@ -23,7 +27,50 @@ const Hero: React.FC = () => {
       title: 'Commercial Campaign',
       subtitle: 'Brand Collaboration',
     },
-  ];
+  ]);
+  const [showSocials, setShowSocials] = useState(true);
+
+  useEffect(() => {
+    const fetchHeroContent = async () => {
+      setLoading(true);
+      try {
+        const { data } = await supabase
+          .from('settings')
+          .select('key, value')
+          .in('key', ['hero_title', 'hero_subtitle', 'hero_slides']);
+        if (data) {
+          setHeroTitle(data.find((row) => row.key === 'hero_title')?.value || '');
+          setHeroSubtitle(data.find((row) => row.key === 'hero_subtitle')?.value || '');
+          const slidesRaw = data.find((row) => row.key === 'hero_slides')?.value;
+          if (slidesRaw) {
+            try {
+              const parsed = JSON.parse(slidesRaw);
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                setSlides(parsed);
+              }
+            } catch { }
+          }
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchHeroContent();
+  }, []);
+
+  useEffect(() => {
+    const fetchShowSocials = async () => {
+      try {
+        const { data } = await supabase
+          .from('settings')
+          .select('value')
+          .eq('key', 'hero_show_socials')
+          .single();
+        setShowSocials(data?.value === 'false' ? false : true);
+      } catch { }
+    };
+    fetchShowSocials();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -72,16 +119,22 @@ const Hero: React.FC = () => {
             transition={{ delay: 0.5 }}
             className="text-6xl md:text-8xl font-bold mb-4"
           >
-            {t('hero_title')}
+            {loading ? '...' : (heroTitle || t('hero_title'))}
           </motion.h1>
           <motion.p
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
-            className="text-xl md:text-2xl mb-8 text-gray-300"
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-xl text-gray-300 mb-8"
           >
-            {t('hero_subtitle')}
+            {loading ? '' : (heroSubtitle || t('hero_subtitle'))}
           </motion.p>
+          {showSocials && (
+            <div className="flex justify-center gap-6 mb-8">
+              {/* Ici, le composant ou les icônes réseaux sociaux existants */}
+              <SocialMedia />
+            </div>
+          )}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -119,9 +172,8 @@ const Hero: React.FC = () => {
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all duration-200 ${
-              index === currentSlide ? 'bg-gold' : 'bg-white/50'
-            }`}
+            className={`w-3 h-3 rounded-full transition-all duration-200 ${index === currentSlide ? 'bg-gold' : 'bg-white/50'
+              }`}
           />
         ))}
       </div>
