@@ -32,7 +32,7 @@ const SocialMediaHero: React.FC = () => {
                     .from('settings')
                     .select('value')
                     .eq('key', 'hero_socials')
-                    .single();
+                    .maybeSingle();
                 let arr = [];
                 try {
                     arr = data?.value ? JSON.parse(data.value) : [];
