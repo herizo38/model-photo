@@ -62,13 +62,13 @@ const Navigation: React.FC = () => {
     fetchNavSettings();
   }, []);
 
-  const navigation = [
-    navVisibility.home && { name: t('home'), href: '/' },
-    navVisibility.gallery && { name: t('gallery'), href: '/gallery' },
-    navVisibility.about && { name: t('about'), href: '/about' },
-    navVisibility.contact && { name: t('contact'), href: '/contact' },
-    navVisibility.admin && { name: t('admin'), href: '/admin' },
-  ].filter(Boolean);
+  const navItems = [
+    { name: 'Accueil', href: '/' },
+    { name: 'Galerie', href: '/gallery' },
+    { name: 'À Propos', href: '/about' },
+    { name: 'Contact', href: '/contact' },
+    { name: 'Admin', href: '/admin' },
+  ];
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -88,13 +88,13 @@ const Navigation: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navigation.map((item) => (
+            {navItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
                 className={`text-sm font-medium transition-colors duration-200 ${isActive(item.href)
-                    ? 'text-gold'
-                    : 'text-white hover:text-gold'
+                  ? 'text-gold'
+                  : 'text-white hover:text-gold'
                   }`}
               >
                 {item.name}
@@ -103,7 +103,7 @@ const Navigation: React.FC = () => {
 
             {/* Language Switcher */}
             <div className="flex items-center space-x-2">
-              <Globe className="w-4 h-4 text-white" />
+              {/* <Globe className="w-4 h-4 text-white" />
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
@@ -111,7 +111,7 @@ const Navigation: React.FC = () => {
               >
                 <option value="en" className="bg-black">EN</option>
                 <option value="fr" className="bg-black">FR</option>
-              </select>
+              </select> */}
             </div>
           </div>
 
@@ -135,15 +135,15 @@ const Navigation: React.FC = () => {
             className="md:hidden bg-black/95 backdrop-blur-md border-t border-white/10"
           >
             <div className="px-4 py-6 space-y-4">
-              {navigation.length > 0 ? (
-                navigation.map((item) => (
+              {navItems.length > 0 ? (
+                navItems.map((item) => (
                   <Link
                     key={item.name}
                     to={item.href}
                     onClick={() => setIsOpen(false)}
                     className={`block text-lg font-medium transition-colors duration-200 ${isActive(item.href)
-                        ? 'text-gold'
-                        : 'text-white hover:text-gold'
+                      ? 'text-gold'
+                      : 'text-white hover:text-gold'
                       }`}
                   >
                     {item.name}
@@ -151,7 +151,7 @@ const Navigation: React.FC = () => {
                 ))
               ) : null}
               {/* Mobile Language Switcher uniquement si aucun menu */}
-              {navigation.length === 0 && (
+              {navItems.length === 0 && (
                 <div className="flex items-center space-x-2 pt-4 border-t border-white/10">
                   <Globe className="w-4 h-4 text-white" />
                   <select

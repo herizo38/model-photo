@@ -12,10 +12,10 @@ interface PhotoGalleryProps {
   limit?: number;
 }
 
-const PhotoGallery: React.FC<PhotoGalleryProps> = ({ 
-  photos = [], 
-  showFilters = true, 
-  limit 
+const PhotoGallery: React.FC<PhotoGalleryProps> = ({
+  photos = [],
+  showFilters = true,
+  limit
 }) => {
   const { t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -43,7 +43,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      
+
       const formattedPhotos: Photo[] = (data || []).map(photo => ({
         id: photo.id,
         title: photo.title,
@@ -57,7 +57,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
         clicks: photo.clicks,
         shares: photo.shares,
       }));
-      
+
       setDbPhotos(formattedPhotos);
     } catch (error) {
       console.error('Error fetching photos:', error);
@@ -160,15 +160,15 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
 
   useEffect(() => {
     let filtered = displayPhotos;
-    
+
     if (selectedCategory !== 'all') {
       filtered = displayPhotos.filter(photo => photo.category === selectedCategory);
     }
-    
+
     if (limit) {
       filtered = filtered.slice(0, limit);
     }
-    
+
     setFilteredPhotos(filtered);
   }, [selectedCategory, displayPhotos, limit]);
 
@@ -205,7 +205,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
         </div>
-        
+
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <div className="absolute inset-0 flex items-center justify-center">
@@ -233,7 +233,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
         {/* Featured Badge */}
         {photo.featured && (
           <div className="absolute top-2 right-2 bg-gold text-black px-2 py-1 rounded-full text-xs font-bold">
-            Featured
+            A la une
           </div>
         )}
       </motion.div>
@@ -243,7 +243,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
   return (
     <div className="space-y-8">
       {/* Category Filter */}
-      {showFilters && (
+      {/* {showFilters && (
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center space-x-2">
             <Filter className="w-5 h-5 text-gray-400" />
@@ -253,17 +253,16 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
-              className={`px-4 py-2 rounded-full font-medium transition-all duration-200 ${
-                selectedCategory === category.id
-                  ? 'bg-gold text-black'
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
+              className={`px-4 py-2 rounded-full font-medium transition-all duration-200 ${selectedCategory === category.id
+                ? 'bg-gold text-black'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                }`}
             >
               {category.name}
             </button>
           ))}
         </div>
-      )}
+      )} */}
 
       {/* Photo Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

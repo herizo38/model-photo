@@ -57,7 +57,7 @@ const FeaturedPhotos: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-xl text-gray-300"
           >
-            {desc || t('latest_work')}
+            {(desc || t('latest_work')).replace(/<[^>]+>/g, '')}
           </motion.p>
         </div>
 

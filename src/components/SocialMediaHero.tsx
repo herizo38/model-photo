@@ -45,7 +45,7 @@ const SocialMediaHero: React.FC = () => {
 
     return (
         <div className="flex flex-col items-center gap-2 bg-transparent p-0">
-            <span className="text-gold font-semibold text-lg mb-1">Follow me</span>
+            <span className="text-gold font-semibold text-lg mb-1">Suis-moi sur les reseaux</span>
             <div className="flex gap-4">
                 {socials.map((social) => {
                     const Icon = iconMap[social.icon] || Globe;

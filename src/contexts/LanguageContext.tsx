@@ -24,7 +24,7 @@ const translations = {
     hero_subtitle: 'Capturing moments, creating art',
     featured_photos: 'Featured Photos',
     latest_work: 'Latest Work',
-    view_gallery: 'View Gallery',
+    view_gallery: 'Galerie',
 
     // Gallery
     all_categories: 'All Categories',

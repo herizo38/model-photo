@@ -169,7 +169,9 @@ const PresentationSection: React.FC = () => {
               }}
             >
               {presentation.description.split(/<br\s*\/?>|\n/).map((line, idx) => {
-                const [key, ...rest] = line.split(':');
+                // Supprimer toutes les balises HTML de chaque ligne
+                const cleanLine = line.replace(/<[^>]+>/g, '');
+                const [key, ...rest] = cleanLine.split(':');
                 if (!rest.length) return null;
                 return (
                   <div key={idx}>
