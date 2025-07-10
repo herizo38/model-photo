@@ -15,6 +15,7 @@ import AboutSettings from './pages/AboutSettings';
 import ContactSettings from './pages/ContactSettings';
 import SocialSettings from './pages/SocialSettings';
 import GeneralSettings from './pages/GeneralSettings';
+import PresentationSettings from './pages/PresentationSettings';
 
 const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState('general');
@@ -22,6 +23,7 @@ const Settings: React.FC = () => {
   const tabs = [
     { id: 'general', name: 'Général', icon: SettingsIcon },
     { id: 'home', name: 'Accueil', icon: Home },
+    { id: 'presentation', name: 'Présentation', icon: Users },
     { id: 'gallery', name: 'Galerie', icon: Image },
     { id: 'about', name: 'À Propos', icon: Users },
     { id: 'contact', name: 'Contact', icon: MessageSquare },
@@ -34,6 +36,8 @@ const Settings: React.FC = () => {
         return <GeneralSettings />;
       case 'home':
         return <HomeSettings />;
+      case 'presentation':
+        return <PresentationSettings />;
       case 'gallery':
         return <GallerySettings />;
       case 'about':
