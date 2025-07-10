@@ -65,7 +65,7 @@ const Hero: React.FC = () => {
           .from('settings')
           .select('value')
           .eq('key', 'hero_show_socials')
-          .single();
+          .maybeSingle();
         setShowSocials(data?.value === 'false' ? false : true);
       } catch { }
     };
