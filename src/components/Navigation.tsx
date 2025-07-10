@@ -3,11 +3,34 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Camera, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 
 const Navigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const { language, setLanguage, t } = useLanguage();
+  const [siteLogo, setSiteLogo] = useState('');
+  const [siteTitle, setSiteTitle] = useState('Portfolio');
+
+  useEffect(() => {
+    const fetchSiteInfo = async () => {
+      try {
+        const { data } = await supabase
+          .from('settings')
+          .select('key, value')
+          .in('key', ['site_logo', 'site_title']);
+        
+        if (data) {
+          setSiteLogo(data.find(row => row.key === 'site_logo')?.value || '');
+          setSiteTitle(data.find(row => row.key === 'site_title')?.value || 'Portfolio');
+        }
+      } catch (error) {
+        console.error('Error fetching site info:', error);
+      }
+    };
+    fetchSiteInfo();
+  }, []);
 
   const navigation = [
     { name: t('home'), href: '/' },
@@ -25,8 +48,12 @@ const Navigation: React.FC = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <Camera className="w-8 h-8 text-gold" />
-            <span className="text-xl font-bold text-white">Portfolio</span>
+            {siteLogo ? (
+              <img src={siteLogo} alt={siteTitle} className="w-8 h-8 object-contain" />
+            ) : (
+              <Camera className="w-8 h-8 text-gold" />
+            )}
+            <span className="text-xl font-bold text-white">{siteTitle}</span>
           </Link>
 
           {/* Desktop Navigation */}

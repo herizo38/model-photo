@@ -1,18 +1,53 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Instagram, Youtube, Twitter, Facebook } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase';
 
 interface SocialMediaProps {
   hero?: boolean;
 }
 
+interface SocialLink {
+  id: string;
+  platform: string;
+  url: string;
+  icon: string;
+  active: boolean;
+}
 const SocialMedia: React.FC<SocialMediaProps> = ({ hero }) => {
-  const socialLinks = [
-    { icon: Instagram, url: 'https://instagram.com', label: 'Instagram' },
-    { icon: Youtube, url: 'https://youtube.com', label: 'YouTube' },
-    { icon: Twitter, url: 'https://twitter.com', label: 'Twitter' },
-    { icon: Facebook, url: 'https://facebook.com', label: 'Facebook' },
-  ];
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+  const [socialTitle, setSocialTitle] = useState('Follow My Journey');
+  const [socialDesc, setSocialDesc] = useState('Stay updated with my latest work and behind-the-scenes content');
+
+  useEffect(() => {
+    const fetchSocialData = async () => {
+      try {
+        // Fetch social links
+        const { data: linksData } = await supabase
+          .from('social_links')
+          .select('*')
+          .eq('active', true)
+          .order('order_index');
+
+        // Fetch social section settings
+        const { data: settingsData } = await supabase
+          .from('settings')
+          .select('key, value')
+          .in('key', ['social_title', 'social_desc']);
+
+        setSocialLinks(linksData || []);
+        
+        if (settingsData) {
+          setSocialTitle(settingsData.find(row => row.key === 'social_title')?.value || 'Follow My Journey');
+          setSocialDesc(settingsData.find(row => row.key === 'social_desc')?.value || 'Stay updated with my latest work and behind-the-scenes content');
+        }
+      } catch (error) {
+        console.error('Error fetching social data:', error);
+      }
+    };
+    fetchSocialData();
+  }, []);
 
   if (hero) {
     return (
@@ -46,7 +81,7 @@ const SocialMedia: React.FC<SocialMediaProps> = ({ hero }) => {
             transition={{ duration: 0.6 }}
             className="text-4xl md:text-5xl font-bold text-white mb-4"
           >
-            Follow My Journey
+            {socialTitle}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -54,21 +89,30 @@ const SocialMedia: React.FC<SocialMediaProps> = ({ hero }) => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-xl text-gray-300"
           >
-            Stay updated with my latest work and behind-the-scenes content
+            {socialDesc}
           </motion.p>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {socialLinks.map((social) => (
+        <div className={`grid gap-8 ${socialLinks.length <= 2 ? 'grid-cols-1 md:grid-cols-2' : socialLinks.length <= 4 ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'}`}>
+          {socialLinks.map((social, index) => (
             <motion.a
-              key={social.label}
+              key={social.id}
               href={social.url}
               target="_blank"
               rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
               whileHover={{ scale: 1.2 }}
               className="flex flex-col items-center bg-gray-900 p-6 rounded-lg shadow-lg hover:bg-gold/10 transition-colors"
             >
-              <span className="mb-2 text-gold"><social.icon className="w-8 h-8" /></span>
-              <span className="text-white font-semibold">{social.label}</span>
+              {social.icon ? (
+                <img src={social.icon} alt={social.platform} className="w-8 h-8 mb-2 object-contain" />
+              ) : (
+                <div className="w-8 h-8 mb-2 bg-gold rounded-full flex items-center justify-center">
+                  <span className="text-black font-bold text-sm">{social.platform.charAt(0)}</span>
+                </div>
+              )}
+              <span className="text-white font-semibold">{social.platform}</span>
             </motion.a>
           ))}
         </div>

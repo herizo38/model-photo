@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
 import SocialMediaHero from './SocialMediaHero';
+import { Link } from 'react-router-dom';
 
 const Hero: React.FC = () => {
   const { t } = useLanguage();
@@ -141,7 +142,7 @@ const Hero: React.FC = () => {
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             <button className="px-8 py-3 bg-gold hover:bg-gold/90 text-black font-semibold rounded-full transition-all duration-200 transform hover:scale-105">
-              {t('view_gallery')}
+              <Link to="/gallery">{t('view_gallery')}</Link>
             </button>
             <button className="flex items-center space-x-2 px-8 py-3 border-2 border-white hover:bg-white hover:text-black text-white font-semibold rounded-full transition-all duration-200">
               <Play className="w-5 h-5" />
