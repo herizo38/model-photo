@@ -65,8 +65,8 @@ const Navigation: React.FC = () => {
   const navItems = [
     { name: 'Accueil', href: '/' },
     { name: 'Galerie', href: '/gallery' },
-    { name: 'À Propos', href: '/about' },
-    { name: 'Contact', href: '/contact' },
+    // { name: 'À propos', href: '/about' },
+    // { name: 'Contact', href: '/contact' },
     { name: 'Admin', href: '/admin' },
   ];
 
