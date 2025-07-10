@@ -12,6 +12,13 @@ const Navigation: React.FC = () => {
   const { language, setLanguage, t } = useLanguage();
   const [siteLogo, setSiteLogo] = useState('');
   const [siteTitle, setSiteTitle] = useState('Portfolio');
+  const [navVisibility, setNavVisibility] = useState({
+    home: true,
+    gallery: true,
+    about: true,
+    contact: true,
+    admin: true,
+  });
 
   useEffect(() => {
     const fetchSiteInfo = async () => {
@@ -20,7 +27,7 @@ const Navigation: React.FC = () => {
           .from('settings')
           .select('key, value')
           .in('key', ['site_logo', 'site_title']);
-        
+
         if (data) {
           setSiteLogo(data.find(row => row.key === 'site_logo')?.value || '');
           setSiteTitle(data.find(row => row.key === 'site_title')?.value || 'Portfolio');
@@ -32,13 +39,36 @@ const Navigation: React.FC = () => {
     fetchSiteInfo();
   }, []);
 
+  useEffect(() => {
+    const fetchNavSettings = async () => {
+      const { data } = await supabase
+        .from('settings')
+        .select('key, value')
+        .in('key', [
+          'show_nav_home',
+          'show_nav_gallery',
+          'show_nav_about',
+          'show_nav_contact',
+          'show_nav_admin',
+        ]);
+      setNavVisibility({
+        home: data?.find(row => row.key === 'show_nav_home')?.value !== 'false',
+        gallery: data?.find(row => row.key === 'show_nav_gallery')?.value !== 'false',
+        about: data?.find(row => row.key === 'show_nav_about')?.value !== 'false',
+        contact: data?.find(row => row.key === 'show_nav_contact')?.value !== 'false',
+        admin: data?.find(row => row.key === 'show_nav_admin')?.value !== 'false',
+      });
+    };
+    fetchNavSettings();
+  }, []);
+
   const navigation = [
-    { name: t('home'), href: '/' },
-    { name: t('gallery'), href: '/gallery' },
-    { name: t('about'), href: '/about' },
-    { name: t('contact'), href: '/contact' },
-    { name: t('admin'), href: '/admin' },
-  ];
+    navVisibility.home && { name: t('home'), href: '/' },
+    navVisibility.gallery && { name: t('gallery'), href: '/gallery' },
+    navVisibility.about && { name: t('about'), href: '/about' },
+    navVisibility.contact && { name: t('contact'), href: '/contact' },
+    navVisibility.admin && { name: t('admin'), href: '/admin' },
+  ].filter(Boolean);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -62,16 +92,15 @@ const Navigation: React.FC = () => {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`text-sm font-medium transition-colors duration-200 ${
-                  isActive(item.href)
+                className={`text-sm font-medium transition-colors duration-200 ${isActive(item.href)
                     ? 'text-gold'
                     : 'text-white hover:text-gold'
-                }`}
+                  }`}
               >
                 {item.name}
               </Link>
             ))}
-            
+
             {/* Language Switcher */}
             <div className="flex items-center space-x-2">
               <Globe className="w-4 h-4 text-white" />
@@ -106,33 +135,35 @@ const Navigation: React.FC = () => {
             className="md:hidden bg-black/95 backdrop-blur-md border-t border-white/10"
           >
             <div className="px-4 py-6 space-y-4">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className={`block text-lg font-medium transition-colors duration-200 ${
-                    isActive(item.href)
-                      ? 'text-gold'
-                      : 'text-white hover:text-gold'
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
-              
-              {/* Mobile Language Switcher */}
-              <div className="flex items-center space-x-2 pt-4 border-t border-white/10">
-                <Globe className="w-4 h-4 text-white" />
-                <select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  className="bg-transparent text-white text-sm border-none focus:outline-none"
-                >
-                  <option value="en" className="bg-black">English</option>
-                  <option value="fr" className="bg-black">Français</option>
-                </select>
-              </div>
+              {navigation.length > 0 ? (
+                navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className={`block text-lg font-medium transition-colors duration-200 ${isActive(item.href)
+                        ? 'text-gold'
+                        : 'text-white hover:text-gold'
+                      }`}
+                  >
+                    {item.name}
+                  </Link>
+                ))
+              ) : null}
+              {/* Mobile Language Switcher uniquement si aucun menu */}
+              {navigation.length === 0 && (
+                <div className="flex items-center space-x-2 pt-4 border-t border-white/10">
+                  <Globe className="w-4 h-4 text-white" />
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    className="bg-transparent text-white text-sm border-none focus:outline-none"
+                  >
+                    <option value="en" className="bg-black">English</option>
+                    <option value="fr" className="bg-black">Français</option>
+                  </select>
+                </div>
+              )}
             </div>
           </motion.div>
         )}

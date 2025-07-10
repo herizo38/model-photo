@@ -33,7 +33,7 @@ const GeneralSettings: React.FC = () => {
         setButtonColor(data.find(row => row.key === 'button_color')?.value || '#d4af37');
       }
     } catch (error) {
-      toast.error('Erreur lors du chargement des paramètres');
+      toast.error('Failed to load settings');
     } finally {
       setLoading(false);
     }
@@ -58,9 +58,9 @@ const GeneralSettings: React.FC = () => {
         .getPublicUrl(fileName);
 
       setSiteLogo(urlData.publicUrl);
-      toast.success('Logo uploadé avec succès');
+      toast.success('Logo uploaded successfully');
     } catch (error) {
-      toast.error('Erreur lors de l\'upload du logo');
+      toast.error('Error uploading logo');
     } finally {
       setUploading(false);
     }
@@ -86,61 +86,61 @@ const GeneralSettings: React.FC = () => {
       document.documentElement.style.setProperty('--color-primary', primaryColor);
       document.documentElement.style.setProperty('--color-button', buttonColor);
 
-      toast.success('Paramètres sauvegardés avec succès');
+      toast.success('Settings saved successfully');
     } catch (error) {
-      toast.error('Erreur lors de la sauvegarde');
+      toast.error('Error saving settings');
     }
   };
 
   if (loading) {
-    return <div className="text-white">Chargement...</div>;
+    return <div className="text-white">Loading...</div>;
   }
 
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-white mb-6">Paramètres Généraux</h2>
+        <h2 className="text-2xl font-bold text-white mb-6">General Settings</h2>
       </div>
 
       {/* Site Info */}
       <div className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            Titre du site
+            Site Title
           </label>
           <input
             type="text"
             value={siteTitle}
             onChange={(e) => setSiteTitle(e.target.value)}
             className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
-            placeholder="Mon Portfolio"
+            placeholder="My Portfolio"
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            Description du site
+            Site Description
           </label>
           <textarea
             value={siteDescription}
             onChange={(e) => setSiteDescription(e.target.value)}
             rows={3}
             className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent resize-none"
-            placeholder="Portfolio professionnel de modèle..."
+            placeholder="Professional portfolio model..."
           />
         </div>
       </div>
 
       {/* Logo Upload */}
       <div className="space-y-4">
-        <h3 className="text-xl font-bold text-white">Logo du Site</h3>
-        
+        <h3 className="text-xl font-bold text-white">Site Logo</h3>
+
         {siteLogo && (
           <div className="flex items-center space-x-4 p-4 bg-gray-800 rounded-lg">
-            <img src={siteLogo} alt="Logo actuel" className="w-16 h-16 object-contain rounded" />
+            <img src={siteLogo} alt="Current Logo" className="w-16 h-16 object-contain rounded" />
             <div>
-              <p className="text-white font-medium">Logo actuel</p>
-              <p className="text-gray-400 text-sm">Cliquez sur "Choisir un fichier" pour le remplacer</p>
+              <p className="text-white font-medium">Current Logo</p>
+              <p className="text-gray-400 text-sm">Click "Choose File" to replace it</p>
             </div>
           </div>
         )}
@@ -160,7 +160,7 @@ const GeneralSettings: React.FC = () => {
             className="flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
           >
             <Upload className="w-5 h-5" />
-            <span>{uploading ? 'Upload...' : 'Upload'}</span>
+            <span>{uploading ? 'Uploading...' : 'Upload'}</span>
           </button>
         </div>
       </div>
@@ -169,13 +169,13 @@ const GeneralSettings: React.FC = () => {
       <div className="space-y-6">
         <h3 className="text-xl font-bold text-white flex items-center space-x-2">
           <Palette className="w-6 h-6" />
-          <span>Couleurs du Site</span>
+          <span>Site Colors</span>
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Couleur principale (or)
+              Primary Color (Gold)
             </label>
             <div className="flex items-center space-x-4">
               <input
@@ -196,7 +196,7 @@ const GeneralSettings: React.FC = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Couleur des boutons
+              Button Color
             </label>
             <div className="flex items-center space-x-4">
               <input
@@ -218,19 +218,19 @@ const GeneralSettings: React.FC = () => {
 
         {/* Color Preview */}
         <div className="p-6 bg-gray-800 rounded-lg">
-          <h4 className="text-white font-medium mb-4">Aperçu des couleurs</h4>
+          <h4 className="text-white font-medium mb-4">Color Preview</h4>
           <div className="flex items-center space-x-4">
             <div
               className="px-6 py-3 rounded-lg font-semibold text-black"
               style={{ backgroundColor: primaryColor }}
             >
-              Couleur principale
+              Primary Color
             </div>
             <div
               className="px-6 py-3 rounded-lg font-semibold text-black"
               style={{ backgroundColor: buttonColor }}
             >
-              Couleur bouton
+              Button Color
             </div>
           </div>
         </div>
@@ -243,7 +243,7 @@ const GeneralSettings: React.FC = () => {
           className="flex items-center space-x-2 px-8 py-3 bg-gold hover:bg-gold/90 text-black font-semibold rounded-lg transition-all duration-200"
         >
           <Save className="w-5 h-5" />
-          <span>Sauvegarder les Paramètres</span>
+          <span>Save Settings</span>
         </button>
       </div>
     </div>

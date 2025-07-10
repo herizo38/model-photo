@@ -12,6 +12,8 @@ interface SocialLink {
   icon: string;
   active: boolean;
   order_index: number;
+  iconColor: string;
+  textColor: string;
 }
 
 interface HeroSocial {
@@ -21,28 +23,34 @@ interface HeroSocial {
   url: string;
   desc?: string;
   customIcon?: string;
+  iconColor: string;
+  textColor: string;
 }
 
 const SocialSettings: React.FC = () => {
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [heroSocials, setHeroSocials] = useState<HeroSocial[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Form states
   const [linkForm, setLinkForm] = useState({
     platform: '',
     url: '',
     icon: '',
-    active: true
+    active: true,
+    iconColor: '#FFD700',
+    textColor: '#fff'
   });
   const [heroForm, setHeroForm] = useState({
     icon: 'Instagram',
     name: '',
     url: '',
     desc: '',
-    customIcon: ''
+    customIcon: '',
+    iconColor: '#FFD700',
+    textColor: '#fff'
   });
-  
+
   const [editingLinkIndex, setEditingLinkIndex] = useState<number | null>(null);
   const [editingHeroIndex, setEditingHeroIndex] = useState<number | null>(null);
   const [iconFile, setIconFile] = useState<File | null>(null);
@@ -119,7 +127,7 @@ const SocialSettings: React.FC = () => {
         });
 
       if (error) throw error;
-      toast.success('Réseaux sociaux du Hero sauvegardés');
+      toast.success('Réseaux sociaux du bandeau sauvegardés');
     } catch (error) {
       toast.error('Erreur lors de la sauvegarde');
     }
@@ -131,16 +139,16 @@ const SocialSettings: React.FC = () => {
     setUploading(true);
     try {
       const fileExt = iconFile.name.split('.').pop();
-      const fileName = `social-icons/${uuidv4()}.${fileExt}`;
+      const fileName = `${uuidv4()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('public')
+        .from('social-icons')
         .upload(fileName, iconFile, { upsert: true });
 
       if (uploadError) throw uploadError;
 
       const { data: urlData } = supabase.storage
-        .from('public')
+        .from('social-icons')
         .getPublicUrl(fileName);
 
       return urlData.publicUrl;
@@ -182,7 +190,7 @@ const SocialSettings: React.FC = () => {
     }
 
     setSocialLinks(newLinks);
-    setLinkForm({ platform: '', url: '', icon: '', active: true });
+    setLinkForm({ platform: '', url: '', icon: '', active: true, iconColor: '#FFD700', textColor: '#fff' });
     setEditingLinkIndex(null);
     setIconFile(null);
   };
@@ -216,7 +224,7 @@ const SocialSettings: React.FC = () => {
     }
 
     setHeroSocials(newHeroSocials);
-    setHeroForm({ icon: 'Instagram', name: '', url: '', desc: '', customIcon: '' });
+    setHeroForm({ icon: 'Instagram', name: '', url: '', desc: '', customIcon: '', iconColor: '#FFD700', textColor: '#fff' });
     setEditingHeroIndex(null);
     setIconFile(null);
   };
@@ -250,7 +258,7 @@ const SocialSettings: React.FC = () => {
       {/* Social Links Section */}
       <div className="space-y-6">
         <h3 className="text-xl font-bold text-gold">Liens Réseaux Sociaux (Section dédiée)</h3>
-        
+
         <form onSubmit={handleLinkSubmit} className="space-y-4 p-6 bg-gray-800 rounded-lg">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <input
@@ -278,7 +286,24 @@ const SocialSettings: React.FC = () => {
               />
             </div>
           </div>
-          
+
+          <div className="flex items-center space-x-2">
+            <label className="text-gray-300 text-sm">Couleur icône</label>
+            <input
+              type="color"
+              value={linkForm.iconColor}
+              onChange={e => setLinkForm(f => ({ ...f, iconColor: e.target.value }))}
+              className="w-10 h-10 rounded"
+            />
+            <label className="text-gray-300 text-sm">Couleur texte</label>
+            <input
+              type="color"
+              value={linkForm.textColor}
+              onChange={e => setLinkForm(f => ({ ...f, textColor: e.target.value }))}
+              className="w-10 h-10 rounded"
+            />
+          </div>
+
           <div className="flex items-center space-x-4">
             <label className="flex items-center space-x-2">
               <input
@@ -289,7 +314,7 @@ const SocialSettings: React.FC = () => {
               />
               <span className="text-gray-300">Actif</span>
             </label>
-            
+
             <button
               type="submit"
               disabled={uploading}
@@ -298,13 +323,13 @@ const SocialSettings: React.FC = () => {
               <Plus className="w-5 h-5" />
               <span>{editingLinkIndex !== null ? 'Modifier' : 'Ajouter'}</span>
             </button>
-            
+
             {editingLinkIndex !== null && (
               <button
                 type="button"
                 onClick={() => {
                   setEditingLinkIndex(null);
-                  setLinkForm({ platform: '', url: '', icon: '', active: true });
+                  setLinkForm({ platform: '', url: '', icon: '', active: true, iconColor: '#FFD700', textColor: '#fff' });
                   setIconFile(null);
                 }}
                 className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
@@ -326,16 +351,15 @@ const SocialSettings: React.FC = () => {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className={`flex items-center space-x-4 p-4 bg-gray-800 rounded-lg ${
-                          snapshot.isDragging ? 'ring-2 ring-gold' : ''
-                        }`}
+                        className={`flex items-center space-x-4 p-4 bg-gray-800 rounded-lg ${snapshot.isDragging ? 'ring-2 ring-gold' : ''
+                          }`}
                       >
                         {link.icon && (
-                          <img src={link.icon} alt={link.platform} className="w-10 h-10 object-contain rounded" />
+                          <img src={link.icon} alt={link.platform} className="w-10 h-10 object-contain rounded" style={{ backgroundColor: link.iconColor }} />
                         )}
                         <div className="flex-1">
-                          <h4 className="text-white font-medium">{link.platform}</h4>
-                          <p className="text-gray-400 text-sm truncate">{link.url}</p>
+                          <h4 className="font-medium" style={{ color: link.textColor }}>{link.platform}</h4>
+                          <p className="text-sm truncate" style={{ color: link.textColor }}>{link.url}</p>
                         </div>
                         <div className="flex items-center space-x-2">
                           {link.active ? (
@@ -384,8 +408,8 @@ const SocialSettings: React.FC = () => {
 
       {/* Hero Socials Section */}
       <div className="space-y-6">
-        <h3 className="text-xl font-bold text-gold">Réseaux Sociaux du Hero</h3>
-        
+        <h3 className="text-xl font-bold text-gold">Réseaux Sociaux du bandeau</h3>
+
         <form onSubmit={handleHeroSubmit} className="space-y-4 p-6 bg-gray-800 rounded-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <select
@@ -397,7 +421,7 @@ const SocialSettings: React.FC = () => {
                 <option key={option} value={option}>{option}</option>
               ))}
             </select>
-            
+
             <input
               type="text"
               value={heroForm.name}
@@ -407,7 +431,7 @@ const SocialSettings: React.FC = () => {
               required
             />
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="url"
@@ -417,7 +441,7 @@ const SocialSettings: React.FC = () => {
               placeholder="URL du profil"
               required
             />
-            
+
             <input
               type="text"
               value={heroForm.desc}
@@ -426,7 +450,7 @@ const SocialSettings: React.FC = () => {
               placeholder="Description (optionnelle)"
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Icône personnalisée (optionnelle)
@@ -438,7 +462,24 @@ const SocialSettings: React.FC = () => {
               className="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gold file:text-black hover:file:bg-gold/90"
             />
           </div>
-          
+
+          <div className="flex items-center space-x-2">
+            <label className="text-gray-300 text-sm">Couleur icône</label>
+            <input
+              type="color"
+              value={heroForm.iconColor}
+              onChange={e => setHeroForm(f => ({ ...f, iconColor: e.target.value }))}
+              className="w-10 h-10 rounded"
+            />
+            <label className="text-gray-300 text-sm">Couleur texte</label>
+            <input
+              type="color"
+              value={heroForm.textColor}
+              onChange={e => setHeroForm(f => ({ ...f, textColor: e.target.value }))}
+              className="w-10 h-10 rounded"
+            />
+          </div>
+
           <div className="flex space-x-3">
             <button
               type="submit"
@@ -448,13 +489,13 @@ const SocialSettings: React.FC = () => {
               <Plus className="w-5 h-5" />
               <span>{editingHeroIndex !== null ? 'Modifier' : 'Ajouter'}</span>
             </button>
-            
+
             {editingHeroIndex !== null && (
               <button
                 type="button"
                 onClick={() => {
                   setEditingHeroIndex(null);
-                  setHeroForm({ icon: 'Instagram', name: '', url: '', desc: '', customIcon: '' });
+                  setHeroForm({ icon: 'Instagram', name: '', url: '', desc: '', customIcon: '', iconColor: '#FFD700', textColor: '#fff' });
                   setIconFile(null);
                 }}
                 className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
@@ -476,21 +517,20 @@ const SocialSettings: React.FC = () => {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className={`flex items-center space-x-4 p-4 bg-gray-800 rounded-lg ${
-                          snapshot.isDragging ? 'ring-2 ring-gold' : ''
-                        }`}
+                        className={`flex items-center space-x-4 p-4 bg-gray-800 rounded-lg ${snapshot.isDragging ? 'ring-2 ring-gold' : ''
+                          }`}
                       >
                         {social.customIcon ? (
-                          <img src={social.customIcon} alt={social.name} className="w-10 h-10 object-contain rounded bg-white" />
+                          <img src={social.customIcon} alt={social.name} className="w-10 h-10 object-contain rounded bg-white" style={{ backgroundColor: social.iconColor }} />
                         ) : (
-                          <div className="w-10 h-10 bg-gold rounded flex items-center justify-center text-black font-bold">
+                          <div className="w-10 h-10 rounded flex items-center justify-center font-bold" style={{ backgroundColor: social.iconColor, color: social.textColor }}>
                             {social.icon.charAt(0)}
                           </div>
                         )}
                         <div className="flex-1">
-                          <h4 className="text-white font-medium">{social.name}</h4>
-                          <p className="text-gray-400 text-sm">{social.icon}</p>
-                          {social.desc && <p className="text-gray-500 text-xs">{social.desc}</p>}
+                          <h4 className="font-medium" style={{ color: social.textColor }}>{social.name}</h4>
+                          <p className="text-sm" style={{ color: social.textColor }}>{social.icon}</p>
+                          {social.desc && <p className="text-xs" style={{ color: social.textColor }}>{social.desc}</p>}
                         </div>
                         <div className="flex space-x-2">
                           <button

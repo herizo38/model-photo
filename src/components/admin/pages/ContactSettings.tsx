@@ -31,10 +31,23 @@ const ContactSettings: React.FC = () => {
     const [fieldModalOpen, setFieldModalOpen] = useState(false);
     const [editingFieldIndex, setEditingFieldIndex] = useState<number | null>(null);
     const [fieldForm, setFieldForm] = useState<Omit<ContactField, 'id' | 'order'>>({ label: '', type: 'text', placeholder: '', required: false, visible: true, validation: '' });
+    const [showContactForm, setShowContactForm] = useState(true);
 
     useEffect(() => { fetchContactSettings(); }, []);
     // Chargement des champs dynamiques
     useEffect(() => { fetchContactFields(); }, []);
+    useEffect(() => {
+        // Charger la valeur depuis Supabase
+        const fetchShowContactForm = async () => {
+            const { data } = await supabase
+                .from('settings')
+                .select('value')
+                .eq('key', 'show_contact_form')
+                .maybeSingle();
+            setShowContactForm(data?.value !== 'false');
+        };
+        fetchShowContactForm();
+    }, []);
 
     const fetchContactSettings = async () => {
         setLoading(true);
@@ -53,7 +66,7 @@ const ContactSettings: React.FC = () => {
     const saveLinks = async (newLinks: ContactLink[]) => {
         setLinks(newLinks);
         await supabase.from('settings').upsert({ key: 'contact_links', value: JSON.stringify(newLinks) });
-        toast.success('Liens sauvegardés !');
+        toast.success('Links saved!');
     };
 
     const openModal = (idx: number | null = null) => {
@@ -86,7 +99,7 @@ const ContactSettings: React.FC = () => {
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!form.name.trim() || !form.url.trim() || (!form.icon && !form.file)) {
-            toast.error('Tous les champs sont obligatoires, y compris l’icône.');
+            toast.error('All fields are required, including the icon.');
             return;
         }
         let iconUrl = form.icon;
@@ -95,7 +108,7 @@ const ContactSettings: React.FC = () => {
             const ext = form.file.name.split('.').pop();
             const fileName = `contact-icons/${uuidv4()}.${ext}`;
             const { error } = await supabase.storage.from('public').upload(fileName, form.file, { upsert: true });
-            if (error) { toast.error('Erreur upload icône'); setUploading(false); return; }
+            if (error) { toast.error('Icon upload error'); setUploading(false); return; }
             const { data: urlData } = supabase.storage.from('public').getPublicUrl(fileName);
             iconUrl = urlData.publicUrl;
             setUploading(false);
@@ -111,7 +124,7 @@ const ContactSettings: React.FC = () => {
     };
 
     const handleDelete = (idx: number) => {
-        if (!window.confirm('Supprimer ce lien ?')) return;
+        if (!window.confirm('Delete this link?')) return;
         const newLinks = links.filter((_, i) => i !== idx);
         saveLinks(newLinks);
     };
@@ -133,12 +146,12 @@ const ContactSettings: React.FC = () => {
     const saveIntro = async (e: React.FormEvent) => {
         e.preventDefault();
         await supabase.from('settings').upsert({ key: 'contact_intro', value: intro });
-        toast.success('Texte de contact sauvegardé !');
+        toast.success('Contact text saved!');
     };
 
     const saveShowSocialHero = async () => {
         await supabase.from('settings').upsert({ key: 'show_social_hero', value: showSocialHero ? 'true' : 'false' });
-        toast.success('Option sauvegardée !');
+        toast.success('Option saved!');
     };
 
     // Chargement des champs dynamiques
@@ -151,7 +164,7 @@ const ContactSettings: React.FC = () => {
     const saveFields = async (newFields: ContactField[]) => {
         setFields(newFields);
         await supabase.from('settings').upsert({ key: 'contact_form_fields', value: JSON.stringify(newFields) });
-        toast.success('Champs du formulaire sauvegardés !');
+        toast.success('Contact form fields saved!');
     };
     const openFieldModal = (idx: number | null = null) => {
         setEditingFieldIndex(idx);
@@ -170,7 +183,7 @@ const ContactSettings: React.FC = () => {
     };
     const handleFieldSave = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!fieldForm.label.trim()) { toast.error('Le label est obligatoire'); return; }
+        if (!fieldForm.label.trim()) { toast.error('Label is required'); return; }
         let newFields = [...fields];
         if (editingFieldIndex !== null) {
             newFields[editingFieldIndex] = { ...newFields[editingFieldIndex], ...fieldForm };
@@ -181,7 +194,7 @@ const ContactSettings: React.FC = () => {
         closeFieldModal();
     };
     const handleFieldDelete = (idx: number) => {
-        if (!window.confirm('Supprimer ce champ ?')) return;
+        if (!window.confirm('Delete this field?')) return;
         const newFields = fields.filter((_, i) => i !== idx);
         saveFields(newFields);
     };
@@ -200,34 +213,51 @@ const ContactSettings: React.FC = () => {
         saveFields(newFields);
     };
 
+    const handleToggleShowContactForm = async () => {
+        const newValue = !showContactForm;
+        setShowContactForm(newValue);
+        await supabase
+            .from('settings')
+            .upsert({ key: 'show_contact_form', value: newValue ? 'true' : 'false' });
+        toast.success('Option saved!');
+    };
+
     return (
         <div className="p-4 max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold mb-8">Paramètres de la page Contact</h2>
+            <h2 className="text-2xl font-bold mb-8">Contact Page Settings</h2>
             {loading ? (
-                <div className="text-gray-400">Chargement…</div>
+                <div className="text-gray-400">Loading…</div>
             ) : (
                 <>
                     {/* Texte d'intro/contact */}
                     <form onSubmit={saveIntro} className="mb-8">
-                        <label className="block text-lg font-semibold mb-2">Texte d’introduction</label>
-                        <textarea value={intro} onChange={e => setIntro(e.target.value)} rows={3} className="w-full bg-gray-800 border border-gray-700 rounded-lg text-white p-3 mb-2" placeholder="Votre texte de contact…" />
-                        <button type="submit" className="px-4 py-2 bg-gold text-black rounded-lg font-semibold">Sauvegarder</button>
+                        <label className="block text-lg font-semibold mb-2">Introduction Text</label>
+                        <textarea value={intro} onChange={e => setIntro(e.target.value)} rows={3} className="w-full bg-gray-800 border border-gray-700 rounded-lg text-white p-3 mb-2" placeholder="Your contact text…" />
+                        <button type="submit" className="px-4 py-2 bg-gold text-black rounded-lg font-semibold">Save</button>
                     </form>
 
                     {/* Option affichage icônes réseaux sociaux sous le Hero */}
                     <div className="mb-8 flex items-center gap-4">
-                        <label className="text-lg font-semibold">Afficher les icônes réseaux sociaux sous le Hero</label>
+                        <label className="text-lg font-semibold">Show social icons under the Hero</label>
                         <input type="checkbox" checked={showSocialHero} onChange={e => setShowSocialHero(e.target.checked)} onBlur={saveShowSocialHero} className="w-6 h-6" />
+                    </div>
+
+                    {/* Switch afficher/cacher le formulaire de contact */}
+                    <div className="mb-6">
+                        <label className="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" checked={showContactForm} onChange={handleToggleShowContactForm} />
+                            <span className="text-white">Show contact form</span>
+                        </label>
                     </div>
 
                     {/* Liens de contact - Drag & drop + actions */}
                     <div className="mb-8">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-xl font-bold text-gold">Liens de contact</h3>
-                            <button onClick={() => openModal()} className="flex items-center gap-2 px-4 py-2 bg-gold text-black rounded-lg font-semibold"><Plus className="w-4 h-4" />Ajouter un lien</button>
+                            <h3 className="text-xl font-bold text-gold">Contact Links</h3>
+                            <button onClick={() => openModal()} className="flex items-center gap-2 px-4 py-2 bg-gold text-black rounded-lg font-semibold"><Plus className="w-4 h-4" />Add a link</button>
                         </div>
                         {links.length === 0 ? (
-                            <div className="text-gray-400">Aucun lien ajouté.</div>
+                            <div className="text-gray-400">No links added.</div>
                         ) : (
                             <DragDropContext onDragEnd={onDragEnd}>
                                 <Droppable droppableId="contact-links">
@@ -242,9 +272,9 @@ const ContactSettings: React.FC = () => {
                                                                 <div className="font-semibold text-gold truncate">{link.name}</div>
                                                                 <div className="text-gray-300 text-sm truncate">{link.url}</div>
                                                             </div>
-                                                            <button onClick={() => handleToggleVisible(idx)} className="p-2" title={link.visible ? 'Masquer' : 'Afficher'}>{link.visible ? <Eye className="w-5 h-5 text-gold" /> : <EyeOff className="w-5 h-5 text-gray-500" />}</button>
-                                                            <button onClick={() => openModal(idx)} className="p-2" title="Modifier"><Edit className="w-5 h-5 text-blue-400" /></button>
-                                                            <button onClick={() => handleDelete(idx)} className="p-2" title="Supprimer"><Trash2 className="w-5 h-5 text-red-500" /></button>
+                                                            <button onClick={() => handleToggleVisible(idx)} className="p-2" title={link.visible ? 'Hide' : 'Show'}>{link.visible ? <Eye className="w-5 h-5 text-gold" /> : <EyeOff className="w-5 h-5 text-gray-500" />}</button>
+                                                            <button onClick={() => openModal(idx)} className="p-2" title="Edit"><Edit className="w-5 h-5 text-blue-400" /></button>
+                                                            <button onClick={() => handleDelete(idx)} className="p-2" title="Delete"><Trash2 className="w-5 h-5 text-red-500" /></button>
                                                         </div>
                                                     )}
                                                 </Draggable>
@@ -262,10 +292,10 @@ const ContactSettings: React.FC = () => {
                         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
                             <div className="bg-gray-900 rounded-lg p-8 w-full max-w-md relative">
                                 <button onClick={closeModal} className="absolute top-3 right-3 text-gray-400 hover:text-white"><svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg></button>
-                                <h4 className="text-xl font-bold mb-6">{editingIndex !== null ? 'Modifier le lien' : 'Ajouter un lien'}</h4>
+                                <h4 className="text-xl font-bold mb-6">{editingIndex !== null ? 'Edit Link' : 'Add a Link'}</h4>
                                 <form onSubmit={handleSave} className="space-y-4">
                                     <div>
-                                        <label className="block text-sm font-medium mb-1">Nom</label>
+                                        <label className="block text-sm font-medium mb-1">Name</label>
                                         <input name="name" value={form.name} onChange={handleFormChange} className="w-full bg-gray-800 border border-gray-700 rounded-lg text-white p-2" required />
                                     </div>
                                     <div>
@@ -273,26 +303,26 @@ const ContactSettings: React.FC = () => {
                                         <input name="url" value={form.url} onChange={handleFormChange} className="w-full bg-gray-800 border border-gray-700 rounded-lg text-white p-2" required type="url" pattern="https?://.+" />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium mb-1">Icône (SVG, PNG, JPG)</label>
+                                        <label className="block text-sm font-medium mb-1">Icon (SVG, PNG, JPG)</label>
                                         <input type="file" accept="image/*,.svg" onChange={handleFileChange} className="w-full" />
-                                        {iconPreview && <img src={iconPreview} alt="Aperçu icône" className="w-12 h-12 mt-2 object-contain rounded bg-gray-800 border border-gray-700" />}
+                                        {iconPreview && <img src={iconPreview} alt="Icon preview" className="w-12 h-12 mt-2 object-contain rounded bg-gray-800 border border-gray-700" />}
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <label className="text-sm font-medium">Afficher ce lien</label>
+                                        <label className="text-sm font-medium">Show this link</label>
                                         <input type="checkbox" name="visible" checked={form.visible} onChange={handleFormChange} />
                                     </div>
-                                    <button type="submit" className="w-full py-2 bg-gold text-black rounded-lg font-semibold mt-4" disabled={uploading}>{uploading ? 'Upload…' : 'Sauvegarder'}</button>
+                                    <button type="submit" className="w-full py-2 bg-gold text-black rounded-lg font-semibold mt-4" disabled={uploading}>{uploading ? 'Uploading…' : 'Save'}</button>
                                 </form>
                             </div>
                         </div>
                     )}
                     <div className="mb-12">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-xl font-bold text-gold">Champs du formulaire de contact</h3>
-                            <button onClick={() => openFieldModal()} className="flex items-center gap-2 px-4 py-2 bg-gold text-black rounded-lg font-semibold"><Plus className="w-4 h-4" />Ajouter un champ</button>
+                            <h3 className="text-xl font-bold text-gold">Contact Form Fields</h3>
+                            <button onClick={() => openFieldModal()} className="flex items-center gap-2 px-4 py-2 bg-gold text-black rounded-lg font-semibold"><Plus className="w-4 h-4" />Add a field</button>
                         </div>
                         {fields.length === 0 ? (
-                            <div className="text-gray-400">Aucun champ défini.</div>
+                            <div className="text-gray-400">No fields defined.</div>
                         ) : (
                             <DragDropContext onDragEnd={onFieldDragEnd}>
                                 <Droppable droppableId="contact-fields">
@@ -306,11 +336,11 @@ const ContactSettings: React.FC = () => {
                                                             <div className="flex-1 min-w-0">
                                                                 <div className="font-semibold text-gold truncate">{field.label} <span className="text-xs text-gray-400">[{field.type}]</span></div>
                                                                 <div className="text-gray-300 text-sm truncate">{field.placeholder}</div>
-                                                                <div className="text-xs text-gray-400">{field.required ? <CheckSquare className="inline w-4 h-4 text-green-400" /> : <XSquare className="inline w-4 h-4 text-gray-500" />} {field.visible ? 'Visible' : 'Caché'}</div>
+                                                                <div className="text-xs text-gray-400">{field.required ? <CheckSquare className="inline w-4 h-4 text-green-400" /> : <XSquare className="inline w-4 h-4 text-gray-500" />} {field.visible ? 'Visible' : 'Hidden'}</div>
                                                             </div>
-                                                            <button onClick={() => handleFieldToggleVisible(idx)} className="p-2" title={field.visible ? 'Masquer' : 'Afficher'}>{field.visible ? <Eye className="w-5 h-5 text-gold" /> : <EyeOff className="w-5 h-5 text-gray-500" />}</button>
-                                                            <button onClick={() => openFieldModal(idx)} className="p-2" title="Modifier"><Edit className="w-5 h-5 text-blue-400" /></button>
-                                                            <button onClick={() => handleFieldDelete(idx)} className="p-2" title="Supprimer"><Trash2 className="w-5 h-5 text-red-500" /></button>
+                                                            <button onClick={() => handleFieldToggleVisible(idx)} className="p-2" title={field.visible ? 'Hide' : 'Show'}>{field.visible ? <Eye className="w-5 h-5 text-gold" /> : <EyeOff className="w-5 h-5 text-gray-500" />}</button>
+                                                            <button onClick={() => openFieldModal(idx)} className="p-2" title="Edit"><Edit className="w-5 h-5 text-blue-400" /></button>
+                                                            <button onClick={() => handleFieldDelete(idx)} className="p-2" title="Delete"><Trash2 className="w-5 h-5 text-red-500" /></button>
                                                         </div>
                                                     )}
                                                 </Draggable>
@@ -326,7 +356,7 @@ const ContactSettings: React.FC = () => {
                             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
                                 <div className="bg-gray-900 rounded-lg p-8 w-full max-w-md relative">
                                     <button onClick={closeFieldModal} className="absolute top-3 right-3 text-gray-400 hover:text-white"><svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg></button>
-                                    <h4 className="text-xl font-bold mb-6">{editingFieldIndex !== null ? 'Modifier le champ' : 'Ajouter un champ'}</h4>
+                                    <h4 className="text-xl font-bold mb-6">{editingFieldIndex !== null ? 'Edit Field' : 'Add a Field'}</h4>
                                     <form onSubmit={handleFieldSave} className="space-y-4">
                                         <div>
                                             <label className="block text-sm font-medium mb-1">Label</label>
@@ -335,10 +365,10 @@ const ContactSettings: React.FC = () => {
                                         <div>
                                             <label className="block text-sm font-medium mb-1">Type</label>
                                             <select name="type" value={fieldForm.type} onChange={handleFieldFormChange} className="w-full bg-gray-800 border border-gray-700 rounded-lg text-white p-2">
-                                                <option value="text">Texte</option>
+                                                <option value="text">Text</option>
                                                 <option value="email">Email</option>
-                                                <option value="tel">Téléphone</option>
-                                                <option value="textarea">Zone de texte</option>
+                                                <option value="tel">Phone</option>
+                                                <option value="textarea">Textarea</option>
                                             </select>
                                         </div>
                                         <div>
@@ -346,18 +376,18 @@ const ContactSettings: React.FC = () => {
                                             <input name="placeholder" value={fieldForm.placeholder} onChange={handleFieldFormChange} className="w-full bg-gray-800 border border-gray-700 rounded-lg text-white p-2" />
                                         </div>
                                         <div className="flex items-center gap-3">
-                                            <label className="text-sm font-medium">Obligatoire</label>
+                                            <label className="text-sm font-medium">Required</label>
                                             <input type="checkbox" name="required" checked={fieldForm.required} onChange={handleFieldFormChange} />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium mb-1">Validation (regex, optionnel)</label>
+                                            <label className="block text-sm font-medium mb-1">Validation (regex, optional)</label>
                                             <input name="validation" value={fieldForm.validation} onChange={handleFieldFormChange} className="w-full bg-gray-800 border border-gray-700 rounded-lg text-white p-2" placeholder="ex: ^[0-9]+$" />
                                         </div>
                                         <div className="flex items-center gap-3">
                                             <label className="text-sm font-medium">Visible</label>
                                             <input type="checkbox" name="visible" checked={fieldForm.visible} onChange={handleFieldFormChange} />
                                         </div>
-                                        <button type="submit" className="w-full py-2 bg-gold text-black rounded-lg font-semibold mt-4">Sauvegarder</button>
+                                        <button type="submit" className="w-full py-2 bg-gold text-black rounded-lg font-semibold mt-4">Save</button>
                                     </form>
                                 </div>
                             </div>

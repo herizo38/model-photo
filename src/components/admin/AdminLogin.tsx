@@ -21,12 +21,12 @@ const AdminLogin: React.FC = () => {
     try {
       const { error } = await signIn(data.email, data.password);
       if (error) {
-        toast.error('Identifiants invalides');
+        toast.error('Invalid credentials');
       } else {
-        toast.success('Bienvenue !');
+        toast.success('Welcome!');
       }
     } catch {
-      toast.error('Échec de la connexion');
+      toast.error('Login failed');
     } finally {
       setIsLoading(false);
     }
@@ -46,15 +46,13 @@ const AdminLogin: React.FC = () => {
               <Lock className="w-8 h-8 text-gold" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">Accès Administrateur</h1>
-          <p className="text-gray-400">Connectez-vous pour gérer votre portfolio</p>
+          <h1 className="text-2xl font-bold text-white mb-2">Admin Access</h1>
+          <p className="text-gray-400">Sign in to manage your portfolio</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Adresse e-mail
-            </label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Email address</label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
@@ -67,7 +65,7 @@ const AdminLogin: React.FC = () => {
                 })}
                 type="email"
                 className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
-                placeholder="admin@exemple.com"
+                placeholder="admin@example.com"
               />
             </div>
             {errors.email && (
@@ -76,16 +74,14 @@ const AdminLogin: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Mot de passe
-            </label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 {...register('password', { required: 'Password is required' })}
                 type={showPassword ? 'text' : 'password'}
                 className="w-full pl-10 pr-12 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
-                placeholder="Entrez votre mot de passe"
+                placeholder="Enter your password"
               />
               <button
                 type="button"
@@ -105,14 +101,12 @@ const AdminLogin: React.FC = () => {
             disabled={isLoading}
             className="w-full py-3 bg-gold hover:bg-gold/90 disabled:bg-gold/50 text-black font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 disabled:transform-none"
           >
-            {isLoading ? 'Connexion en cours...' : 'Se connecter'}
+            {isLoading ? 'Logging in...' : 'Sign in'}
           </button>
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-400">
-            Identifiants de démonstration : admin@exemple.com / admin123
-          </p>
+          <p className="text-sm text-gray-400">Demo credentials: admin@example.com / admin123</p>
         </div>
       </motion.div>
     </div>

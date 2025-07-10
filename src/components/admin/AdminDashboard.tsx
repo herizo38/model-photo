@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  BarChart3, 
-  Camera, 
-  MessageSquare, 
-  Users, 
-  Eye, 
-  MousePointer, 
+import {
+  BarChart3,
+  Camera,
+  MessageSquare,
+  Users,
+  Eye,
+  MousePointer,
   Share2,
   TrendingUp,
   Calendar,
@@ -39,6 +39,11 @@ const AdminDashboard: React.FC = () => {
   useEffect(() => {
     fetchDashboardStats();
   }, []);
+
+  // Ajoute une fonction à appeler après modification des photos
+  const handlePhotosChanged = () => {
+    fetchDashboardStats();
+  };
 
   const fetchDashboardStats = async () => {
     try {
@@ -159,10 +164,9 @@ const AdminDashboard: React.FC = () => {
                   <p className="text-gray-400 text-sm font-medium">{stat.title}</p>
                   <p className="text-2xl font-bold text-white mt-1">{stat.value}</p>
                   {stat.change && (
-                    <p className={`text-sm mt-1 ${
-                      stat.change.includes('+') ? 'text-green-400' : 
-                      stat.change === 'New!' ? 'text-orange-400' : 'text-gray-400'
-                    }`}>
+                    <p className={`text-sm mt-1 ${stat.change.includes('+') ? 'text-green-400' :
+                        stat.change === 'New!' ? 'text-orange-400' : 'text-gray-400'
+                      }`}>
                       {stat.change}
                     </p>
                   )}

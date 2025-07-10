@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Eye, 
-  Star, 
-  Upload, 
-  X, 
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  Star,
+  Upload,
+  X,
   Save,
   Filter,
   Search
@@ -54,6 +54,8 @@ const PhotoManager: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<PhotoForm>();
 
@@ -117,38 +119,87 @@ const PhotoManager: React.FC = () => {
     reset();
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedVideo(e.target.files[0]);
+    }
+  };
+
   const onSubmit = async (data: PhotoForm) => {
     try {
+      if (!selectedFile) {
+        toast.error("Merci de sélectionner une image à uploader.");
+        return;
+      }
+      const fileExt = selectedFile.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const { error: uploadError } = await supabase
+        .storage
+        .from('media')
+        .upload(`photos/${fileName}`, selectedFile);
+      if (uploadError) {
+        toast.error("Erreur lors de l’upload du fichier image");
+        return;
+      }
+      const { data: publicUrlData } = supabase
+        .storage
+        .from('media')
+        .getPublicUrl(`photos/${fileName}`);
+      const imageUrl = publicUrlData.publicUrl;
+
+      // Upload vidéo si sélectionnée
+      let videoUrl = '';
+      if (selectedVideo) {
+        const fileExt = selectedVideo.name.split('.').pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        const { error: uploadError } = await supabase
+          .storage
+          .from('media')
+          .upload(`videos/${fileName}`, selectedVideo);
+        if (uploadError) {
+          toast.error("Erreur lors de l’upload de la vidéo");
+          return;
+        }
+        const { data: publicUrlData } = supabase
+          .storage
+          .from('media')
+          .getPublicUrl(`videos/${fileName}`);
+        videoUrl = publicUrlData.publicUrl;
+      }
+
       const photoData = {
         title: data.title,
         description: data.description,
-        image_url: data.image_url,
+        image_url: imageUrl,
+        video_url: videoUrl,
         category_id: data.category_id,
         tags: data.tags.split(',').map(tag => tag.trim()).filter(Boolean),
         featured: data.featured,
       };
-
       if (isEditing && selectedPhoto) {
-        const { error } = await supabase
+        await supabase
           .from('photos')
           .update(photoData)
           .eq('id', selectedPhoto.id);
-
-        if (error) throw error;
-        toast.success('Photo updated successfully');
+        toast.success('Photo mise à jour avec succès');
       } else {
-        const { error } = await supabase
+        await supabase
           .from('photos')
           .insert([photoData]);
-
-        if (error) throw error;
-        toast.success('Photo added successfully');
+        toast.success('Photo ajoutée avec succès');
       }
-
       fetchPhotos();
       closeModal();
-    } catch (error) {
-      toast.error('Failed to save photo');
+      setSelectedFile(null);
+      setSelectedVideo(null);
+    } catch {
+      toast.error('Échec de la sauvegarde de la photo');
     }
   };
 
@@ -186,7 +237,7 @@ const PhotoManager: React.FC = () => {
 
   const filteredPhotos = photos.filter(photo => {
     const matchesSearch = photo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         photo.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+      photo.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesCategory = selectedCategory === 'all' || photo.category_id === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -263,7 +314,7 @@ const PhotoManager: React.FC = () => {
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                 />
               </div>
-              
+
               {/* Overlay */}
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -371,18 +422,36 @@ const PhotoManager: React.FC = () => {
                     />
                   </div>
 
+                  {/* Champ fichier image obligatoire */}
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Image URL
+                      Fichier image (obligatoire)
                     </label>
                     <input
-                      {...register('image_url', { required: 'Image URL is required' })}
-                      type="url"
-                      className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
-                      placeholder="https://example.com/image.jpg"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                      required
                     />
-                    {errors.image_url && (
-                      <p className="mt-1 text-sm text-red-400">{errors.image_url.message}</p>
+                    {selectedFile && (
+                      <p className="mt-1 text-xs text-green-400">Fichier sélectionné : {selectedFile.name}</p>
+                    )}
+                  </div>
+
+                  {/* Champ fichier vidéo optionnel */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Fichier vidéo (optionnel)
+                    </label>
+                    <input
+                      type="file"
+                      accept="video/*"
+                      onChange={handleVideoChange}
+                      className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                    />
+                    {selectedVideo && (
+                      <p className="mt-1 text-xs text-green-400">Fichier sélectionné : {selectedVideo.name}</p>
                     )}
                   </div>
 

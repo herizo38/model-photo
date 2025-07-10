@@ -12,6 +12,8 @@ const FeaturedPhotos: React.FC = () => {
   const [titleColor, setTitleColor] = useState('#fff');
   const [titleSize, setTitleSize] = useState('3rem');
   const [desc, setDesc] = useState('');
+  const [featuredPhotos, setFeaturedPhotos] = useState<any[]>([]);
+
   useEffect(() => {
     const fetchSettings = async () => {
       const { data } = await supabase
@@ -24,6 +26,16 @@ const FeaturedPhotos: React.FC = () => {
       setDesc(data?.find((row) => row.key === 'featured_desc')?.value || '');
     };
     fetchSettings();
+    // Charger uniquement les photos featured
+    const fetchFeaturedPhotos = async () => {
+      const { data } = await supabase
+        .from('photos')
+        .select('*')
+        .eq('featured', true)
+        .order('created_at', { ascending: false });
+      setFeaturedPhotos(data || []);
+    };
+    fetchFeaturedPhotos();
   }, []);
 
   return (
@@ -50,6 +62,7 @@ const FeaturedPhotos: React.FC = () => {
         </div>
 
         <PhotoGallery
+          photos={featuredPhotos}
           showFilters={false}
           limit={6}
         />

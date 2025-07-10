@@ -102,7 +102,7 @@ const PresentationSection: React.FC = () => {
   };
 
   return (
-    <section 
+    <section
       className={`py-${presentation.padding} relative overflow-hidden`}
       style={{
         backgroundColor: presentation.backgroundColor,
@@ -114,7 +114,7 @@ const PresentationSection: React.FC = () => {
     >
       {/* Overlay */}
       {presentation.backgroundImage && (
-        <div 
+        <div
           className="absolute inset-0"
           style={{
             backgroundColor: `rgba(0, 0, 0, ${presentation.overlayOpacity})`
@@ -130,9 +130,9 @@ const PresentationSection: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              style={{ 
-                color: presentation.titleColor, 
-                fontSize: presentation.titleSize 
+              style={{
+                color: presentation.titleColor,
+                fontSize: presentation.titleSize
               }}
               className="font-bold mb-6"
             >
@@ -146,9 +146,9 @@ const PresentationSection: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              style={{ 
-                color: presentation.subtitleColor, 
-                fontSize: presentation.subtitleSize 
+              style={{
+                color: presentation.subtitleColor,
+                fontSize: presentation.subtitleSize
               }}
               className="font-semibold mb-6"
             >
@@ -162,13 +162,21 @@ const PresentationSection: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              style={{ 
-                color: presentation.descriptionColor, 
-                fontSize: presentation.descriptionSize 
+              className="mb-8 leading-relaxed text-left max-w-md mx-auto"
+              style={{
+                color: presentation.descriptionColor,
+                fontSize: presentation.descriptionSize
               }}
-              className="mb-8 leading-relaxed whitespace-pre-line"
             >
-              {presentation.description}
+              {presentation.description.split(/<br\s*\/?>|\n/).map((line, idx) => {
+                const [key, ...rest] = line.split(':');
+                if (!rest.length) return null;
+                return (
+                  <div key={idx}>
+                    <strong>{key.trim()} :</strong> {rest.join(':').trim()}
+                  </div>
+                );
+              })}
             </motion.div>
           )}
 

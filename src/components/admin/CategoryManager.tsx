@@ -60,7 +60,7 @@ const CategoryManager: React.FC = () => {
       if (error) throw error;
       setCategories(data || []);
     } catch {
-      toast.error('Erreur lors du chargement des catégories');
+      toast.error('Failed to load categories');
     } finally {
       setLoading(false);
     }
@@ -113,25 +113,25 @@ const CategoryManager: React.FC = () => {
           .eq('id', selectedCategory.id);
 
         if (error) throw error;
-        toast.success('Catégorie mise à jour avec succès');
+        toast.success('Category updated successfully');
       } else {
         const { error } = await supabase
           .from('categories')
           .insert([categoryData]);
 
         if (error) throw error;
-        toast.success('Catégorie ajoutée avec succès');
+        toast.success('Category added successfully');
       }
 
       fetchCategories();
       closeModal();
     } catch {
-      toast.error('Erreur lors de la sauvegarde');
+      toast.error('Failed to save');
     }
   };
 
   const deleteCategory = async (id: string) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')) return;
+    if (!confirm('Are you sure you want to delete this category?')) return;
 
     try {
       const { error } = await supabase
@@ -140,10 +140,10 @@ const CategoryManager: React.FC = () => {
         .eq('id', id);
 
       if (error) throw error;
-      toast.success('Catégorie supprimée avec succès');
+      toast.success('Category deleted successfully');
       fetchCategories();
     } catch {
-      toast.error('Erreur lors de la suppression');
+      toast.error('Failed to delete');
     }
   };
 
@@ -268,14 +268,12 @@ const CategoryManager: React.FC = () => {
 
                 <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Nom de la catégorie
-                    </label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Category name</label>
                     <input
                       {...register('name', { required: 'Le nom est requis' })}
                       type="text"
                       className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
-                      placeholder="Nom de la catégorie"
+                      placeholder="Category name"
                     />
                     {errors.name && (
                       <p className="mt-1 text-sm text-red-400">{errors.name.message}</p>
@@ -284,14 +282,12 @@ const CategoryManager: React.FC = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Nom en français
-                      </label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Name in French</label>
                       <input
                         {...register('name_fr', { required: 'Le nom en français est requis' })}
                         type="text"
                         className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
-                        placeholder="Nom en français"
+                        placeholder="Name in French"
                       />
                       {errors.name_fr && (
                         <p className="mt-1 text-sm text-red-400">{errors.name_fr.message}</p>
@@ -299,14 +295,12 @@ const CategoryManager: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Nom en anglais
-                      </label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Name in English</label>
                       <input
                         {...register('name_en', { required: 'Le nom en anglais est requis' })}
                         type="text"
                         className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
-                        placeholder="English name"
+                        placeholder="Name in English"
                       />
                       {errors.name_en && (
                         <p className="mt-1 text-sm text-red-400">{errors.name_en.message}</p>

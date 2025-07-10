@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Home, 
-  Image, 
-  Users, 
-  MessageSquare, 
+import {
+  Home,
+  Image,
+  Users,
+  MessageSquare,
   Palette,
   Upload,
   Settings as SettingsIcon
@@ -16,6 +16,7 @@ import ContactSettings from './pages/ContactSettings';
 import SocialSettings from './pages/SocialSettings';
 import GeneralSettings from './pages/GeneralSettings';
 import PresentationSettings from './pages/PresentationSettings';
+import NavigationSettings from './pages/NavigationSettings';
 
 const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState('general');
@@ -27,6 +28,7 @@ const Settings: React.FC = () => {
     { id: 'gallery', name: 'Galerie', icon: Image },
     { id: 'about', name: 'À Propos', icon: Users },
     { id: 'contact', name: 'Contact', icon: MessageSquare },
+    { id: 'navigation', name: 'Navigation', icon: Palette },
     { id: 'social', name: 'Réseaux Sociaux', icon: Palette },
   ];
 
@@ -44,6 +46,8 @@ const Settings: React.FC = () => {
         return <AboutSettings />;
       case 'contact':
         return <ContactSettings />;
+      case 'navigation':
+        return <NavigationSettings />;
       case 'social':
         return <SocialSettings />;
       default:
@@ -70,11 +74,10 @@ const Settings: React.FC = () => {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-colors ${
-                      activeTab === tab.id
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-colors ${activeTab === tab.id
                         ? 'bg-gold text-black'
                         : 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                    }`}
+                      }`}
                   >
                     <tab.icon className="w-5 h-5" />
                     <span>{tab.name}</span>

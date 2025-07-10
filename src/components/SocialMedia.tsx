@@ -37,7 +37,7 @@ const SocialMedia: React.FC<SocialMediaProps> = ({ hero }) => {
           .in('key', ['social_title', 'social_desc']);
 
         setSocialLinks(linksData || []);
-        
+
         if (settingsData) {
           setSocialTitle(settingsData.find(row => row.key === 'social_title')?.value || 'Follow My Journey');
           setSocialDesc(settingsData.find(row => row.key === 'social_desc')?.value || 'Stay updated with my latest work and behind-the-scenes content');
@@ -92,29 +92,31 @@ const SocialMedia: React.FC<SocialMediaProps> = ({ hero }) => {
             {socialDesc}
           </motion.p>
         </div>
-        <div className={`grid gap-8 ${socialLinks.length <= 2 ? 'grid-cols-1 md:grid-cols-2' : socialLinks.length <= 4 ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'}`}>
-          {socialLinks.map((social, index) => (
-            <motion.a
-              key={social.id}
-              href={social.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              whileHover={{ scale: 1.2 }}
-              className="flex flex-col items-center bg-gray-900 p-6 rounded-lg shadow-lg hover:bg-gold/10 transition-colors"
-            >
-              {social.icon ? (
-                <img src={social.icon} alt={social.platform} className="w-8 h-8 mb-2 object-contain" />
-              ) : (
-                <div className="w-8 h-8 mb-2 bg-gold rounded-full flex items-center justify-center">
-                  <span className="text-black font-bold text-sm">{social.platform.charAt(0)}</span>
-                </div>
-              )}
-              <span className="text-white font-semibold">{social.platform}</span>
-            </motion.a>
-          ))}
+        <div className="overflow-x-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8 min-w-max">
+            {socialLinks.map((social, index) => (
+              <motion.a
+                key={social.id}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                whileHover={{ scale: 1.2 }}
+                className="flex flex-col items-center bg-gray-900 p-4 sm:p-6 rounded-lg shadow-lg hover:bg-gold/10 transition-colors"
+              >
+                {social.icon ? (
+                  <img src={social.icon} alt={social.platform} className="w-8 h-8 sm:w-10 sm:h-10 mb-2 object-contain" />
+                ) : (
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 mb-2 bg-gold rounded-full flex items-center justify-center">
+                    <span className="text-black font-bold text-sm">{social.platform.charAt(0)}</span>
+                  </div>
+                )}
+                <span className="text-white font-semibold">{social.platform}</span>
+              </motion.a>
+            ))}
+          </div>
         </div>
       </div>
     </section>

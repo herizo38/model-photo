@@ -8,6 +8,7 @@ const Contact: React.FC = () => {
   const { t } = useLanguage();
   const [contactText, setContactText] = useState('');
   const [loading, setLoading] = useState(true);
+  const [showContactForm, setShowContactForm] = useState(true);
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -24,6 +25,18 @@ const Contact: React.FC = () => {
       }
     };
     fetchContent();
+  }, []);
+
+  useEffect(() => {
+    const fetchShowContactForm = async () => {
+      const { data } = await supabase
+        .from('settings')
+        .select('value')
+        .eq('key', 'show_contact_form')
+        .maybeSingle();
+      setShowContactForm(data?.value !== 'false');
+    };
+    fetchShowContactForm();
   }, []);
 
   return (
@@ -52,7 +65,7 @@ const Contact: React.FC = () => {
           )}
         </div>
 
-        <ContactForm />
+        {showContactForm && <ContactForm />}
       </div>
     </div>
   );
