@@ -19,10 +19,16 @@ export default function useGeoBlock() {
       const blockedCountries: string[] = data.blocked_countries;
       // 2. Vérifier le pays de l'utilisateur
       fetch('https://ipapi.co/json/')
-        .then(res => res.json())
-        .then(data => {
+        .then(async res => {
+          const geo = await res.json();
           if (!isMounted) return;
-          if (blockedCountries.includes(data.country_code)) {
+          if (blockedCountries.includes(geo.country_code)) {
+            // 3. Logger le blocage dans Supabase
+            await supabase.from('geo_block_logs').insert({
+              country_code: geo.country_code,
+              ip: geo.ip,
+              blocked_at: new Date().toISOString(),
+            });
             window.location.href = 'https://www.youtube.com/watch?v=J---aiyznGQ';
           }
         })
