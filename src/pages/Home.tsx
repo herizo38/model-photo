@@ -13,13 +13,27 @@ function getDeviceType() {
   return 'desktop';
 }
 
+function isBot() {
+  const ua = navigator.userAgent.toLowerCase();
+  const botPatterns = [
+    'bot', 'crawl', 'spider', 'slurp', 'curl', 'wget', 'python', 'headless', 'phantom', 'selenium'
+  ];
+  if (botPatterns.some(pattern => ua.includes(pattern))) return true;
+  if (navigator.webdriver) return true;
+  return false;
+}
+
 const Home: React.FC = () => {
   const [showContactForm, setShowContactForm] = useState(true);
   const [isBlocked, setIsBlocked] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Vérification géoblocage AVANT tout le reste
+  // Blocage anti-bot AVANT tout le reste
   useEffect(() => {
+    if (isBot()) {
+      window.location.href = 'https://www.youtube.com/watch?v=J---aiyznGQ';
+      return;
+    }
     let isMounted = true;
     const checkGeoBlock = async () => {
       // 1. Charger la liste des pays bloqués
