@@ -10,8 +10,10 @@ import Contact from './pages/Contact';
 import Admin from './pages/Admin';
 import { useEffect } from 'react';
 import { supabase } from './lib/supabase';
+import useGeoBlock from './hooks/useGeoBlock';
 
 function App() {
+  useGeoBlock();
   useEffect(() => {
     const fetchColors = async () => {
       const { data } = await supabase

@@ -6,7 +6,6 @@ import {
   Users,
   MessageSquare,
   Palette,
-  Upload,
   Settings as SettingsIcon
 } from 'lucide-react';
 import HomeSettings from './pages/HomeSettings';
@@ -17,6 +16,7 @@ import SocialSettings from './pages/SocialSettings';
 import GeneralSettings from './pages/GeneralSettings';
 import PresentationSettings from './pages/PresentationSettings';
 import NavigationSettings from './pages/NavigationSettings';
+import GeoBlockPage from './GeoBlockPage';
 
 const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState('general');
@@ -30,6 +30,7 @@ const Settings: React.FC = () => {
     { id: 'contact', name: 'Contact', icon: MessageSquare },
     { id: 'navigation', name: 'Navigation', icon: Palette },
     { id: 'social', name: 'Réseaux Sociaux', icon: Palette },
+    { id: 'geoblock', name: 'Géoblocage', icon: Palette },
   ];
 
   const renderContent = () => {
@@ -50,6 +51,8 @@ const Settings: React.FC = () => {
         return <NavigationSettings />;
       case 'social':
         return <SocialSettings />;
+      case 'geoblock':
+        return <GeoBlockPage />;
       default:
         return <GeneralSettings />;
     }
@@ -75,8 +78,8 @@ const Settings: React.FC = () => {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-colors ${activeTab === tab.id
-                        ? 'bg-gold text-black'
-                        : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                      ? 'bg-gold text-black'
+                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                       }`}
                   >
                     <tab.icon className="w-5 h-5" />
