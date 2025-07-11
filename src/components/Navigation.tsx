@@ -63,11 +63,11 @@ const Navigation: React.FC = () => {
   }, []);
 
   const navItems = [
-    { name: 'Accueil', href: '/' },
+    // { name: 'Accueil', href: '/' },
     { name: 'Galerie', href: '/gallery' },
     // { name: 'À propos', href: '/about' },
     // { name: 'Contact', href: '/contact' },
-    { name: 'Admin', href: '/admin' },
+    // { name: 'Admin', href: '/admin' },
   ];
 
   const isActive = (path: string) => location.pathname === path;
