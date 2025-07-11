@@ -9,7 +9,7 @@ import { supabase } from '../lib/supabase';
 const Navigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const [siteLogo, setSiteLogo] = useState('');
   const [siteTitle, setSiteTitle] = useState('Portfolio');
   const [navVisibility, setNavVisibility] = useState({
@@ -63,12 +63,15 @@ const Navigation: React.FC = () => {
   }, []);
 
   const navItems = [
-    // { name: 'Accueil', href: '/' },
-    { name: 'Galerie', href: '/gallery' },
-    // { name: 'À propos', href: '/about' },
-    // { name: 'Contact', href: '/contact' },
-    // { name: 'Admin', href: '/admin' },
+    { name: 'Accueil', href: '/', key: 'home' },
+    { name: 'Galerie', href: '/gallery', key: 'gallery' },
+    { name: 'À propos', href: '/about', key: 'about' },
+    { name: 'Contact', href: '/contact', key: 'contact' },
+    { name: 'Admin', href: '/admin', key: 'admin' },
   ];
+
+  // Filtrer les liens selon navVisibility
+  const visibleNavItems = navItems.filter(item => navVisibility[item.key as keyof typeof navVisibility]);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -88,7 +91,7 @@ const Navigation: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
+            {visibleNavItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
@@ -135,8 +138,8 @@ const Navigation: React.FC = () => {
             className="md:hidden bg-black/95 backdrop-blur-md border-t border-white/10"
           >
             <div className="px-4 py-6 space-y-4">
-              {navItems.length > 0 ? (
-                navItems.map((item) => (
+              {visibleNavItems.length > 0 ? (
+                visibleNavItems.map((item) => (
                   <Link
                     key={item.name}
                     to={item.href}
@@ -151,7 +154,7 @@ const Navigation: React.FC = () => {
                 ))
               ) : null}
               {/* Mobile Language Switcher uniquement si aucun menu */}
-              {navItems.length === 0 && (
+              {visibleNavItems.length === 0 && (
                 <div className="flex items-center space-x-2 pt-4 border-t border-white/10">
                   <Globe className="w-4 h-4 text-white" />
                   <select
