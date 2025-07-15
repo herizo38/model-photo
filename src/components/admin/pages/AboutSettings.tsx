@@ -79,13 +79,13 @@ const AboutSettings: React.FC = () => {
             <form onSubmit={async e => { e.preventDefault(); await supabase.from('settings').upsert({ key: 'about_text', value: aboutText }); toast.success('Text saved!'); }} className="mb-8">
                 <label className="block text-lg font-semibold mb-2">Main text</label>
                 <textarea value={aboutText} onChange={e => setAboutText(e.target.value)} rows={4} className="w-full bg-gray-800 border border-gray-700 rounded-lg text-white p-3 mb-2" placeholder="Your text..." />
-                <button type="submit" className="px-4 py-2 bg-gold text-black rounded-lg font-semibold">Save</button>
+                <button type="submit" className="px-6 py-2 bg-[var(--color-button)] text-black rounded-lg font-semibold">Save</button>
             </form>
             {/* My Journey */}
             <form onSubmit={async e => { e.preventDefault(); await supabase.from('settings').upsert({ key: 'about_journey', value: journey }); toast.success('Journey saved!'); }} className="mb-8">
                 <label className="block text-lg font-semibold mb-2">My Journey Section</label>
                 <textarea value={journey} onChange={e => setJourney(e.target.value)} rows={4} className="w-full bg-gray-800 border border-gray-700 rounded-lg text-white p-3 mb-2" placeholder="Tell your story..." />
-                <button type="submit" className="px-4 py-2 bg-gold text-black rounded-lg font-semibold">Save</button>
+                <button type="submit" className="px-6 py-2 bg-[var(--color-button)] text-black rounded-lg font-semibold">Save</button>
             </form>
             {/* Achievements */}
             <div className="mb-10">

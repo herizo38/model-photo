@@ -99,8 +99,8 @@ const Navigation: React.FC = () => {
                 key={item.name}
                 to={item.href}
                 className={`text-sm font-medium transition-colors duration-200 ${isActive(item.href)
-                  ? 'text-gold'
-                  : 'text-white hover:text-gold'
+                  ? 'text-[var(--color-button)]'
+                  : 'text-white hover:text-[var(--color-button)]'
                   }`}
               >
                 {item.name}
@@ -161,7 +161,7 @@ const Navigation: React.FC = () => {
               {/* Mobile Language Switcher uniquement si aucun menu */}
               {visibleNavItems.length === 0 && (
                 <div className="flex items-center space-x-2 pt-4 border-t border-white/10">
-                  <Globe className="w-4 h-4 text-white" />
+                  {/* <Globe className="w-4 h-4 text-white" />
                   <select
                     value={language}
                     onChange={(e) => setLanguage(e.target.value)}
@@ -169,7 +169,7 @@ const Navigation: React.FC = () => {
                   >
                     <option value="en" className="bg-black">English</option>
                     <option value="fr" className="bg-black">Français</option>
-                  </select>
+                  </select> */}
                 </div>
               )}
             </div>

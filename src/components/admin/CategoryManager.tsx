@@ -166,7 +166,7 @@ const CategoryManager: React.FC = () => {
           </div>
           <button
             onClick={() => openModal()}
-            className="flex items-center space-x-2 px-6 py-3 bg-gold hover:bg-gold/90 text-black font-semibold rounded-lg transition-all duration-200 transform hover:scale-105"
+            className="flex items-center space-x-2 px-6 py-3 bg-[var(--color-button)] hover:bg-[var(--color-button)]/90 text-black font-semibold rounded-lg transition-all duration-200 transform hover:scale-105"
           >
             <Plus className="w-5 h-5" />
             <span>Ajouter une Catégorie</span>

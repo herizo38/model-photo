@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { LanguageProvider } from './contexts/LanguageContext';
+import { LanguageProvider, FontFamilyProvider, useFontFamily, ColorProvider } from './contexts/LanguageContext';
 import Navigation from './components/Navigation';
 import Home from './pages/Home';
 import Gallery from './pages/Gallery';
@@ -11,6 +11,17 @@ import Admin from './pages/Admin';
 import { useEffect } from 'react';
 import { supabase } from './lib/supabase';
 import useGeoBlock from './hooks/useGeoBlock';
+
+const FontClassApplier: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { fontFamilyText, loading } = useFontFamily();
+  React.useEffect(() => {
+    if (!loading) {
+      document.body.classList.remove('font-playfair', 'font-didot', 'font-bodoni', 'font-cormorant');
+      document.body.classList.add(`font-${fontFamilyText}`);
+    }
+  }, [fontFamilyText, loading]);
+  return <>{children}</>;
+};
 
 function App() {
   useGeoBlock();
@@ -28,32 +39,38 @@ function App() {
     fetchColors();
   }, []);
   return (
-    <LanguageProvider>
-      <Router>
-        <div className="min-h-screen bg-black">
-          <Navigation />
-          <main>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/gallery" element={<Gallery />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/admin" element={<Admin />} />
-            </Routes>
-          </main>
-          <Toaster
-            position="bottom-right"
-            toastOptions={{
-              style: {
-                background: '#1f2937',
-                color: '#fff',
-                border: '1px solid #374151',
-              },
-            }}
-          />
-        </div>
-      </Router>
-    </LanguageProvider>
+    <ColorProvider>
+      <FontFamilyProvider>
+        <FontClassApplier>
+          <LanguageProvider>
+            <Router>
+              <div className="min-h-screen bg-black">
+                <Navigation />
+                <main>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/gallery" element={<Gallery />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/admin" element={<Admin />} />
+                  </Routes>
+                </main>
+                <Toaster
+                  position="bottom-right"
+                  toastOptions={{
+                    style: {
+                      background: '#1f2937',
+                      color: '#fff',
+                      border: '1px solid #374151',
+                    },
+                  }}
+                />
+              </div>
+            </Router>
+          </LanguageProvider>
+        </FontClassApplier>
+      </FontFamilyProvider>
+    </ColorProvider>
   );
 }
 

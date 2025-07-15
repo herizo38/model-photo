@@ -144,7 +144,7 @@ const PresentationSettings: React.FC = () => {
 
       const { error } = await supabase.from('settings').upsert(settings);
       if (error) throw error;
-      
+
       setBackgroundFile(null);
       toast.success('Paramètres de présentation sauvegardés');
     } catch (error) {
@@ -553,7 +553,7 @@ const PresentationSettings: React.FC = () => {
       {/* Aperçu */}
       <div className="space-y-4">
         <h3 className="text-xl font-bold text-gold">Aperçu</h3>
-        <div 
+        <div
           className="p-8 rounded-lg relative overflow-hidden"
           style={{
             backgroundColor: presentation.backgroundColor,
@@ -563,7 +563,7 @@ const PresentationSettings: React.FC = () => {
           }}
         >
           {presentation.backgroundImage && (
-            <div 
+            <div
               className="absolute inset-0 rounded-lg"
               style={{
                 backgroundColor: `rgba(0, 0, 0, ${presentation.overlayOpacity})`
@@ -572,10 +572,10 @@ const PresentationSettings: React.FC = () => {
           )}
           <div className={`relative z-10 text-${presentation.textAlign}`}>
             {presentation.title && (
-              <h2 
-                style={{ 
-                  color: presentation.titleColor, 
-                  fontSize: presentation.titleSize 
+              <h2
+                style={{
+                  color: presentation.titleColor,
+                  fontSize: presentation.titleSize
                 }}
                 className="font-bold mb-4"
               >
@@ -583,10 +583,10 @@ const PresentationSettings: React.FC = () => {
               </h2>
             )}
             {presentation.subtitle && (
-              <h3 
-                style={{ 
-                  color: presentation.subtitleColor, 
-                  fontSize: presentation.subtitleSize 
+              <h3
+                style={{
+                  color: presentation.subtitleColor,
+                  fontSize: presentation.subtitleSize
                 }}
                 className="font-semibold mb-4"
               >
@@ -594,10 +594,10 @@ const PresentationSettings: React.FC = () => {
               </h3>
             )}
             {presentation.description && (
-              <p 
-                style={{ 
-                  color: presentation.descriptionColor, 
-                  fontSize: presentation.descriptionSize 
+              <p
+                style={{
+                  color: presentation.descriptionColor,
+                  fontSize: presentation.descriptionSize
                 }}
                 className="mb-6 whitespace-pre-line"
               >
@@ -624,7 +624,7 @@ const PresentationSettings: React.FC = () => {
         <button
           onClick={savePresentationSettings}
           disabled={uploading}
-          className="flex items-center space-x-2 px-8 py-3 bg-gold hover:bg-gold/90 text-black font-semibold rounded-lg transition-all duration-200"
+          className="flex items-center space-x-2 px-8 py-3 bg-[var(--color-button)] hover:bg-[var(--color-button)]/90 text-black font-semibold rounded-lg transition-all duration-200"
         >
           <Save className="w-5 h-5" />
           <span>{uploading ? 'Sauvegarde...' : 'Sauvegarder'}</span>

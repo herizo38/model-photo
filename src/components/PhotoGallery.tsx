@@ -192,7 +192,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
         initial={{ opacity: 0, y: 20 }}
         animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.5, delay: index * 0.1 }}
-        className="group relative overflow-hidden rounded-lg bg-black cursor-pointer"
+        className="group relative overflow-hidden rounded-lg bg-[var(--color-background)] cursor-pointer"
         onClick={() => {
           setSelectedPhoto(photo);
           incrementViews(photo.id);
@@ -218,7 +218,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
 
         {/* Featured Badge */}
         {photo.featured && (
-          <div className="absolute top-2 right-2 bg-gold text-black px-2 py-1 rounded-full text-xs font-bold">
+          <div className="absolute top-2 right-2 bg-[var(--color-primary)] text-black px-2 py-1 rounded-full text-xs font-bold">
             A la une
           </div>
         )}

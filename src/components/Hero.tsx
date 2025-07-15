@@ -182,7 +182,7 @@ const Hero: React.FC = () => {
                 href={telegramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center space-x-2 px-8 py-3 bg-gold hover:bg-gold/90 text-black font-semibold rounded-full transition-all duration-200 transform hover:scale-105"
+                className="flex items-center space-x-2 px-8 py-3 bg-[var(--color-button)] hover:bg-[var(--color-button)]/90 text-black font-semibold rounded-full transition-all duration-200 transform hover:scale-105"
               >
                 {/* Icône Telegram SVG */}
                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
@@ -218,13 +218,13 @@ const Hero: React.FC = () => {
       {/* Navigation Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-6 top-1/2 transform -translate-y-1/2 z-20 text-white hover:text-gold transition-colors"
+        className="absolute left-6 top-1/2 transform -translate-y-1/2 z-20 text-white hover:text-[var(--color-button)] transition-colors"
       >
         <ChevronLeft className="w-8 h-8" />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-6 top-1/2 transform -translate-y-1/2 z-20 text-white hover:text-gold transition-colors"
+        className="absolute right-6 top-1/2 transform -translate-y-1/2 z-20 text-white hover:text-[var(--color-button)] transition-colors"
       >
         <ChevronRight className="w-8 h-8" />
       </button>
@@ -235,8 +235,7 @@ const Hero: React.FC = () => {
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all duration-200 ${index === currentSlide ? 'bg-gold' : 'bg-white/50'
-              }`}
+            className={`w-3 h-3 rounded-full transition-all duration-200 ${index === currentSlide ? 'bg-[var(--color-primary)]' : 'bg-white/50'}`}
           />
         ))}
       </div>
@@ -257,7 +256,7 @@ const Hero: React.FC = () => {
       {/* Bouton de rafraîchissement manuel pour les slides (admin/dev) */}
       <button
         onClick={handleRefreshSlides}
-        className="absolute top-6 right-6 z-30 px-4 py-2 bg-gold text-black rounded-lg shadow hover:bg-gold/90"
+        className="absolute top-6 right-6 z-30 px-4 py-2 bg-[var(--color-button)] text-black rounded-lg shadow hover:bg-[var(--color-button)]/90"
       >
         Rafraîchir les slides
       </button>

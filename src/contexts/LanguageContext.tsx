@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { translateText } from '../lib/translate';
+import { supabase } from '../lib/supabase';
 
 interface LanguageContextType {
   language: string;
@@ -9,6 +10,34 @@ interface LanguageContextType {
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+interface FontFamilyContextProps {
+  fontFamilyTitle: string;
+  fontFamilyText: string;
+  loading: boolean;
+}
+
+const FontFamilyContext = createContext<FontFamilyContextProps>({
+  fontFamilyTitle: 'playfair',
+  fontFamilyText: 'cormorant',
+  loading: true,
+});
+
+interface ColorContextProps {
+  primaryColor: string;
+  buttonColor: string;
+  backgroundColor: string;
+  textColor: string;
+  loading: boolean;
+}
+
+const ColorContext = createContext<ColorContextProps>({
+  primaryColor: '#d4af37',
+  buttonColor: '#d4af37',
+  backgroundColor: '#000000',
+  textColor: '#ffffff',
+  loading: true,
+});
 
 const translations = {
   en: {
@@ -148,4 +177,71 @@ export const useLanguage = () => {
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;
+};
+
+export const useFontFamily = () => useContext(FontFamilyContext);
+
+export const FontFamilyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [fontFamilyTitle, setFontFamilyTitle] = useState('playfair');
+  const [fontFamilyText, setFontFamilyText] = useState('cormorant');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFontSettings = async () => {
+      const { data } = await supabase
+        .from('settings')
+        .select('key, value')
+        .in('key', ['font_family_title', 'font_family_text']);
+      setFontFamilyTitle(data?.find(row => row.key === 'font_family_title')?.value || 'playfair');
+      setFontFamilyText(data?.find(row => row.key === 'font_family_text')?.value || 'cormorant');
+      setLoading(false);
+    };
+    fetchFontSettings();
+  }, []);
+
+  return (
+    <FontFamilyContext.Provider value={{ fontFamilyTitle, fontFamilyText, loading }}>
+      {children}
+    </FontFamilyContext.Provider>
+  );
+};
+
+export const useColor = () => useContext(ColorContext);
+
+export const ColorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [primaryColor, setPrimaryColor] = useState('#d4af37');
+  const [buttonColor, setButtonColor] = useState('#d4af37');
+  const [backgroundColor, setBackgroundColor] = useState('#000000');
+  const [textColor, setTextColor] = useState('#ffffff');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchColors = async () => {
+      const { data } = await supabase
+        .from('settings')
+        .select('key, value')
+        .in('key', ['primary_color', 'button_color', 'background_color', 'text_color']);
+      setPrimaryColor(data?.find(row => row.key === 'primary_color')?.value || '#d4af37');
+      setButtonColor(data?.find(row => row.key === 'button_color')?.value || '#d4af37');
+      setBackgroundColor(data?.find(row => row.key === 'background_color')?.value || '#000000');
+      setTextColor(data?.find(row => row.key === 'text_color')?.value || '#ffffff');
+      setLoading(false);
+    };
+    fetchColors();
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      document.documentElement.style.setProperty('--color-primary', primaryColor);
+      document.documentElement.style.setProperty('--color-button', buttonColor);
+      document.documentElement.style.setProperty('--color-background', backgroundColor);
+      document.documentElement.style.setProperty('--color-text', textColor);
+    }
+  }, [primaryColor, buttonColor, backgroundColor, textColor, loading]);
+
+  return (
+    <ColorContext.Provider value={{ primaryColor, buttonColor, backgroundColor, textColor, loading }}>
+      {children}
+    </ColorContext.Provider>
+  );
 };

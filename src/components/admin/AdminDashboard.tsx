@@ -157,7 +157,7 @@ const AdminDashboard: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-gray-900 rounded-lg p-6"
+              className="bg-[var(--color-background)] rounded-lg p-6"
             >
               <div className="flex items-center justify-between">
                 <div>
@@ -165,7 +165,7 @@ const AdminDashboard: React.FC = () => {
                   <p className="text-2xl font-bold text-white mt-1">{stat.value}</p>
                   {stat.change && (
                     <p className={`text-sm mt-1 ${stat.change.includes('+') ? 'text-green-400' :
-                        stat.change === 'New!' ? 'text-orange-400' : 'text-gray-400'
+                      stat.change === 'New!' ? 'text-orange-400' : 'text-gray-400'
                       }`}>
                       {stat.change}
                     </p>
@@ -246,7 +246,7 @@ const AdminDashboard: React.FC = () => {
         >
           <h3 className="text-xl font-bold text-white mb-4">Quick Actions</h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <button className="flex items-center space-x-2 p-4 bg-gold hover:bg-gold/90 text-black rounded-lg transition-colors">
+            <button className="flex items-center space-x-2 p-4 bg-[var(--color-button)] hover:bg-[var(--color-button)]/90 text-black rounded-lg transition-colors">
               <Camera className="w-5 h-5" />
               <span>Add Photo</span>
             </button>

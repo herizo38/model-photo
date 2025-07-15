@@ -78,7 +78,7 @@ const Settings: React.FC = () => {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-colors ${activeTab === tab.id
-                      ? 'bg-gold text-black'
+                      ? 'bg-[var(--color-button)] text-black'
                       : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                       }`}
                   >

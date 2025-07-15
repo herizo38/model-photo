@@ -52,7 +52,7 @@ const SocialMedia: React.FC<SocialMediaProps> = ({ hero }) => {
   if (hero) {
     return (
       <div className="flex flex-col items-center gap-2 bg-transparent p-0">
-        <span className="text-gold font-semibold text-lg mb-1">Suis-moi sur les réseaux</span>
+        <span className="text-[var(--color-button)] font-semibold text-lg mb-1">Suis-moi sur les réseaux</span>
         <div className="flex gap-4">
           {socialLinks.map((social) => (
             <motion.a
@@ -61,7 +61,7 @@ const SocialMedia: React.FC<SocialMediaProps> = ({ hero }) => {
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.2 }}
-              className="text-gold hover:text-white transition-colors"
+              className="text-[var(--color-button)] hover:text-white transition-colors"
             >
               <social.icon className="w-8 h-8" />
             </motion.a>

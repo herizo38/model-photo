@@ -244,7 +244,7 @@ const Analytics: React.FC = () => {
             </select>
             <button
               onClick={exportData}
-              className="flex items-center space-x-2 px-4 py-2 bg-gold hover:bg-gold/90 text-black font-medium rounded-lg transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 bg-[var(--color-button)] hover:bg-[var(--color-button)]/90 text-black font-medium rounded-lg transition-colors"
             >
               <Download className="w-4 h-4" />
               <span>Exporter</span>

@@ -16,6 +16,8 @@ const GeneralSettings: React.FC = () => {
   // Ajout de nouveaux états pour d'autres couleurs
   const [backgroundColor, setBackgroundColor] = useState('#000000');
   const [textColor, setTextColor] = useState('#ffffff');
+  const [fontFamilyTitle, setFontFamilyTitle] = useState('playfair');
+  const [fontFamilyText, setFontFamilyText] = useState('cormorant');
 
   useEffect(() => {
     fetchGeneralSettings();
@@ -26,7 +28,7 @@ const GeneralSettings: React.FC = () => {
       const { data } = await supabase
         .from('settings')
         .select('key, value')
-        .in('key', ['site_title', 'site_description', 'site_logo', 'primary_color', 'button_color', 'background_color', 'text_color']);
+        .in('key', ['site_title', 'site_description', 'site_logo', 'primary_color', 'button_color', 'background_color', 'text_color', 'font_family_title', 'font_family_text']);
 
       if (data) {
         setSiteTitle(data.find(row => row.key === 'site_title')?.value || '');
@@ -36,6 +38,8 @@ const GeneralSettings: React.FC = () => {
         setButtonColor(data.find(row => row.key === 'button_color')?.value || '#d4af37');
         setBackgroundColor(data.find(row => row.key === 'background_color')?.value || '#000000');
         setTextColor(data.find(row => row.key === 'text_color')?.value || '#ffffff');
+        setFontFamilyTitle(data.find(row => row.key === 'font_family_title')?.value || 'playfair');
+        setFontFamilyText(data.find(row => row.key === 'font_family_text')?.value || 'cormorant');
       }
     } catch {
       toast.error('Failed to load settings');
@@ -104,6 +108,8 @@ const GeneralSettings: React.FC = () => {
         { key: 'button_color', value: buttonColor },
         { key: 'background_color', value: backgroundColor },
         { key: 'text_color', value: textColor },
+        { key: 'font_family_title', value: fontFamilyTitle },
+        { key: 'font_family_text', value: fontFamilyText },
       ];
 
       const { error } = await supabase
@@ -317,11 +323,42 @@ const GeneralSettings: React.FC = () => {
         </div>
       </div>
 
+      {/* Police du site */}
+      <div className="space-y-4">
+        <h3 className="text-xl font-bold text-white">Polices du site</h3>
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Police des titres</label>
+          <select
+            value={fontFamilyTitle}
+            onChange={e => setFontFamilyTitle(e.target.value)}
+            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
+          >
+            <option value="playfair">Playfair Display</option>
+            <option value="didot">Didot</option>
+            <option value="bodoni">Bodoni Moda</option>
+            <option value="cormorant">Cormorant Garamond</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Police du texte</label>
+          <select
+            value={fontFamilyText}
+            onChange={e => setFontFamilyText(e.target.value)}
+            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
+          >
+            <option value="playfair">Playfair Display</option>
+            <option value="didot">Didot</option>
+            <option value="bodoni">Bodoni Moda</option>
+            <option value="cormorant">Cormorant Garamond</option>
+          </select>
+        </div>
+      </div>
+
       {/* Save Button */}
       <div className="flex justify-end">
         <button
           onClick={saveGeneralSettings}
-          className="flex items-center space-x-2 px-8 py-3 bg-gold hover:bg-gold/90 text-black font-semibold rounded-lg transition-all duration-200"
+          className="flex items-center space-x-2 px-8 py-3 bg-[var(--color-button)] hover:bg-[var(--color-button)]/90 text-black font-semibold rounded-lg transition-all duration-200"
         >
           <Save className="w-5 h-5" />
           <span>Save Settings</span>
