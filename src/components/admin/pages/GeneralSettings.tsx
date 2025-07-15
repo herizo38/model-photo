@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { toast } from 'react-hot-toast';
-import { Upload, Image, Save, Palette } from 'lucide-react';
+import { Upload, Save, Palette } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
 const GeneralSettings: React.FC = () => {
@@ -13,6 +13,9 @@ const GeneralSettings: React.FC = () => {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
+  // Ajout de nouveaux états pour d'autres couleurs
+  const [backgroundColor, setBackgroundColor] = useState('#000000');
+  const [textColor, setTextColor] = useState('#ffffff');
 
   useEffect(() => {
     fetchGeneralSettings();
@@ -23,7 +26,7 @@ const GeneralSettings: React.FC = () => {
       const { data } = await supabase
         .from('settings')
         .select('key, value')
-        .in('key', ['site_title', 'site_description', 'site_logo', 'primary_color', 'button_color']);
+        .in('key', ['site_title', 'site_description', 'site_logo', 'primary_color', 'button_color', 'background_color', 'text_color']);
 
       if (data) {
         setSiteTitle(data.find(row => row.key === 'site_title')?.value || '');
@@ -31,8 +34,10 @@ const GeneralSettings: React.FC = () => {
         setSiteLogo(data.find(row => row.key === 'site_logo')?.value || '');
         setPrimaryColor(data.find(row => row.key === 'primary_color')?.value || '#d4af37');
         setButtonColor(data.find(row => row.key === 'button_color')?.value || '#d4af37');
+        setBackgroundColor(data.find(row => row.key === 'background_color')?.value || '#000000');
+        setTextColor(data.find(row => row.key === 'text_color')?.value || '#ffffff');
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to load settings');
     } finally {
       setLoading(false);
@@ -59,8 +64,31 @@ const GeneralSettings: React.FC = () => {
 
       setSiteLogo(urlData.publicUrl);
       toast.success('Logo uploaded successfully');
-    } catch (error) {
+    } catch {
       toast.error('Error uploading logo');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDeleteLogo = async () => {
+    if (!siteLogo) return;
+    if (!window.confirm('Supprimer le logo du site ?')) return;
+    setUploading(true);
+    try {
+      // Extraire le chemin du fichier à partir de l'URL publique
+      const match = siteLogo.match(/\/storage\/v1\/object\/public\/([^?]+)/);
+      const filePath = match ? decodeURIComponent(match[1]) : null;
+      if (filePath) {
+        // Tente de supprimer le fichier du bucket 'logos'
+        await supabase.storage.from('logos').remove([filePath]);
+      }
+      // Efface la valeur dans settings
+      await supabase.from('settings').upsert([{ key: 'site_logo', value: '' }]);
+      setSiteLogo('');
+      toast.success('Logo supprimé');
+    } catch {
+      toast.error('Erreur lors de la suppression du logo');
     } finally {
       setUploading(false);
     }
@@ -74,6 +102,8 @@ const GeneralSettings: React.FC = () => {
         { key: 'site_logo', value: siteLogo },
         { key: 'primary_color', value: primaryColor },
         { key: 'button_color', value: buttonColor },
+        { key: 'background_color', value: backgroundColor },
+        { key: 'text_color', value: textColor },
       ];
 
       const { error } = await supabase
@@ -82,12 +112,14 @@ const GeneralSettings: React.FC = () => {
 
       if (error) throw error;
 
-      // Update CSS variables
+      // Met à jour les variables CSS globales
       document.documentElement.style.setProperty('--color-primary', primaryColor);
       document.documentElement.style.setProperty('--color-button', buttonColor);
+      document.documentElement.style.setProperty('--color-background', backgroundColor);
+      document.documentElement.style.setProperty('--color-text', textColor);
 
       toast.success('Settings saved successfully');
-    } catch (error) {
+    } catch {
       toast.error('Error saving settings');
     }
   };
@@ -142,6 +174,13 @@ const GeneralSettings: React.FC = () => {
               <p className="text-white font-medium">Current Logo</p>
               <p className="text-gray-400 text-sm">Click "Choose File" to replace it</p>
             </div>
+            <button
+              onClick={handleDeleteLogo}
+              disabled={uploading}
+              className="ml-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors"
+            >
+              Supprimer
+            </button>
           </div>
         )}
 
@@ -173,6 +212,7 @@ const GeneralSettings: React.FC = () => {
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Couleur principale et bouton existantes */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Primary Color (Gold)
@@ -193,7 +233,6 @@ const GeneralSettings: React.FC = () => {
               />
             </div>
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Button Color
@@ -211,6 +250,48 @@ const GeneralSettings: React.FC = () => {
                 onChange={(e) => setButtonColor(e.target.value)}
                 className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
                 placeholder="#d4af37"
+              />
+            </div>
+          </div>
+          {/* Couleur de fond */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Background Color
+            </label>
+            <div className="flex items-center space-x-4">
+              <input
+                type="color"
+                value={backgroundColor}
+                onChange={(e) => setBackgroundColor(e.target.value)}
+                className="w-16 h-12 bg-gray-800 border border-gray-700 rounded-lg cursor-pointer"
+              />
+              <input
+                type="text"
+                value={backgroundColor}
+                onChange={(e) => setBackgroundColor(e.target.value)}
+                className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
+                placeholder="#000000"
+              />
+            </div>
+          </div>
+          {/* Couleur du texte */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Text Color
+            </label>
+            <div className="flex items-center space-x-4">
+              <input
+                type="color"
+                value={textColor}
+                onChange={(e) => setTextColor(e.target.value)}
+                className="w-16 h-12 bg-gray-800 border border-gray-700 rounded-lg cursor-pointer"
+              />
+              <input
+                type="text"
+                value={textColor}
+                onChange={(e) => setTextColor(e.target.value)}
+                className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
+                placeholder="#ffffff"
               />
             </div>
           </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, Share2, Heart, Filter } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useInView } from 'react-intersection-observer';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Photo } from '../types';
@@ -212,20 +212,6 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
             <div className="text-center text-white">
               <h3 className="text-lg font-bold mb-1">{photo.title}</h3>
               <p className="text-sm text-gray-300 mb-4">{photo.description}</p>
-              <div className="flex items-center justify-center space-x-4">
-                <div className="flex items-center space-x-1">
-                  <Eye className="w-4 h-4" />
-                  <span className="text-sm">{photo.views}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Heart className="w-4 h-4" />
-                  <span className="text-sm">{photo.clicks}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Share2 className="w-4 h-4" />
-                  <span className="text-sm">{photo.shares}</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -304,20 +290,6 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
               <div className="p-6">
                 <h2 className="text-2xl font-bold text-white mb-2">{selectedPhoto.title}</h2>
                 <p className="text-gray-300 mb-4">{selectedPhoto.description}</p>
-                <div className="flex items-center space-x-6 text-sm text-gray-400">
-                  <div className="flex items-center space-x-1">
-                    <Eye className="w-4 h-4" />
-                    <span>{selectedPhoto.views} views</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Heart className="w-4 h-4" />
-                    <span>{selectedPhoto.clicks} likes</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Share2 className="w-4 h-4" />
-                    <span>{selectedPhoto.shares} shares</span>
-                  </div>
-                </div>
               </div>
             </motion.div>
           </motion.div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Camera, Globe } from 'lucide-react';
+import { Menu, X, Heart, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useEffect } from 'react';
@@ -75,6 +75,9 @@ const Navigation: React.FC = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
+  // Ajout d'une logique pour cacher le hamburger menu sur /admin
+  const hideHamburger = location.pathname.startsWith('/admin');
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -84,7 +87,7 @@ const Navigation: React.FC = () => {
             {siteLogo ? (
               <img src={siteLogo} alt={siteTitle} className="w-8 h-8 object-contain" />
             ) : (
-              <Camera className="w-8 h-8 text-gold" />
+              <Heart className="w-8 h-8 text-gold" />
             )}
             <span className="text-xl font-bold text-white">{siteTitle}</span>
           </Link>
@@ -119,12 +122,14 @@ const Navigation: React.FC = () => {
           </div>
 
           {/* Mobile menu button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-white hover:text-gold transition-colors"
-          >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          {!hideHamburger && (
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="md:hidden text-white hover:text-gold transition-colors"
+            >
+              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          )}
         </div>
       </div>
 
