@@ -9,7 +9,10 @@ export default {
         'gold-dark': '#b8941f',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        playfair: ['"Playfair Display"', 'Didot', '"Bodoni Moda"', 'serif'],
+        didot: ['Didot', '"Bodoni Moda"', 'serif'],
+        bodoni: ['"Bodoni Moda"', 'Didot', 'serif'],
+        cormorant: ['"Cormorant Garamond"', 'serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
