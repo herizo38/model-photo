@@ -13,6 +13,7 @@ const GeneralSettings: React.FC = () => {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [instagramUrl, setInstagramUrl] = useState('');
   // Ajout de nouveaux états pour d'autres couleurs
   const [backgroundColor, setBackgroundColor] = useState('#000000');
   const [textColor, setTextColor] = useState('#ffffff');
@@ -28,7 +29,7 @@ const GeneralSettings: React.FC = () => {
       const { data } = await supabase
         .from('settings')
         .select('key, value')
-        .in('key', ['site_title', 'site_description', 'site_logo', 'primary_color', 'button_color', 'background_color', 'text_color', 'font_family_title', 'font_family_text']);
+        .in('key', ['site_title', 'site_description', 'site_logo', 'primary_color', 'button_color', 'background_color', 'text_color', 'font_family_title', 'font_family_text','geoblock_instagram_url']);
 
       if (data) {
         setSiteTitle(data.find(row => row.key === 'site_title')?.value || '');
@@ -40,6 +41,7 @@ const GeneralSettings: React.FC = () => {
         setTextColor(data.find(row => row.key === 'text_color')?.value || '#ffffff');
         setFontFamilyTitle(data.find(row => row.key === 'font_family_title')?.value || 'playfair');
         setFontFamilyText(data.find(row => row.key === 'font_family_text')?.value || 'cormorant');
+        setInstagramUrl(data.find(row => row.key === 'geoblock_instagram_url')?.value || '');
       }
     } catch {
       toast.error('Failed to load settings');
@@ -106,6 +108,7 @@ const GeneralSettings: React.FC = () => {
         { key: 'site_logo', value: siteLogo },
         { key: 'primary_color', value: primaryColor },
         { key: 'button_color', value: buttonColor },
+        { key: 'geoblock_instagram_url', value: instagramUrl },
         { key: 'background_color', value: backgroundColor },
         { key: 'text_color', value: textColor },
         { key: 'font_family_title', value: fontFamilyTitle },
@@ -165,6 +168,18 @@ const GeneralSettings: React.FC = () => {
             rows={3}
             className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent resize-none"
             placeholder="Professional portfolio model..."
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Lien Instagram (pour la page de géoblocage)
+          </label>
+          <input
+            type="url"
+            value={instagramUrl}
+            onChange={e => setInstagramUrl(e.target.value)}
+            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
+            placeholder="https://instagram.com/toncompte"
           />
         </div>
       </div>

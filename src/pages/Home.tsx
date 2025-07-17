@@ -4,6 +4,7 @@ import PresentationSection from '../components/PresentationSection';
 import FeaturedPhotos from '../components/FeaturedPhotos';
 import SocialMedia from '../components/SocialMedia';
 import ContactForm from '../components/ContactForm';
+import GeoBlockedMessage from '../components/GeoBlockedMessage';
 import { supabase } from '../lib/supabase';
 
 function getDeviceType() {
@@ -18,7 +19,6 @@ const Home: React.FC = () => {
   const [isBlocked, setIsBlocked] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Suppression de la protection anti-bot : on ne vérifie plus isBot()
   useEffect(() => {
     let isMounted = true;
     const checkGeoBlock = async () => {
@@ -45,13 +45,11 @@ const Home: React.FC = () => {
             ip: geo.ip,
             blocked_at: new Date().toISOString(),
           });
-          window.location.href = 'https://www.youtube.com/watch?v=J---aiyznGQ';
           setIsBlocked(true);
         } else {
           setIsBlocked(false);
         }
       } catch {
-        // Erreur lors de la récupération de la géolocalisation
         setIsBlocked(false);
       } finally {
         setLoading(false);
@@ -83,7 +81,6 @@ const Home: React.FC = () => {
     }
   }, [isBlocked]);
 
-  // Reste du code (chargement du contenu)
   useEffect(() => {
     const fetchShowContactForm = async () => {
       const { data } = await supabase
@@ -96,8 +93,8 @@ const Home: React.FC = () => {
     fetchShowContactForm();
   }, []);
 
-  // Affichage : rien tant qu'on ne sait pas si bloqué ou si loading
-  if (loading || isBlocked) return null;
+  if (loading) return null;
+  if (isBlocked) return <GeoBlockedMessage />;
 
   return (
     <div>

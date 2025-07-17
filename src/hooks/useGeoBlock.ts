@@ -29,7 +29,8 @@ export default function useGeoBlock() {
               ip: geo.ip,
               blocked_at: new Date().toISOString(),
             });
-            window.location.href = 'https://www.youtube.com/watch?v=J---aiyznGQ';
+            // Suppression de la redirection automatique
+            // window.location.href = 'https://www.youtube.com/watch?v=J---aiyznGQ';
           }
         })
         .catch(() => {
