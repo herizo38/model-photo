@@ -1,36 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { useFontFamily } from '../contexts/LanguageContext';
 
 const citations = [
-    // Identité, jeunesse, rêves
-    { texte: "Ils ne savaient pas que c'était impossible, alors ils l'ont fait.", auteur: 'Mark Twain', theme: 'identite' },
-    { texte: 'Rêve grand, commence petit, agis maintenant.', auteur: 'Robin Sharma', theme: 'identite' },
-    { texte: 'Sois toi-même, tous les autres sont déjà pris.', auteur: 'Oscar Wilde', theme: 'identite' },
-    { texte: "L’avenir appartient à ceux qui croient à la beauté de leurs rêves.", auteur: 'Eleanor Roosevelt', theme: 'identite' },
-    { texte: "Ce que tu fais aujourd’hui peut améliorer tous tes lendemains.", auteur: 'Ralph Marston', theme: 'identite' },
+    // Identité douce, solitude assumée
+    { texte: "Sois douce avec toi-même, tu es en train de te construire.", auteur: 'Anonyme', theme: 'identite' },
+    { texte: "Rester soi-même dans un monde qui tente constamment de te changer est le plus grand des accomplissements.", auteur: 'Ralph Waldo Emerson', theme: 'identite' },
+    { texte: "Il y a de la force dans la douceur et du courage dans la solitude choisie.", auteur: 'Anonyme', theme: 'identite' },
 
-    // Passion, ambition
-    { texte: 'La passion est énergie. Ressens le pouvoir que tu obtiens en te concentrant sur ce qui t’enthousiasme.', auteur: 'Oprah Winfrey', theme: 'passion' },
-    { texte: 'Fais de ta vie un rêve, et d’un rêve une réalité.', auteur: 'Antoine de Saint-Exupéry', theme: 'passion' },
-    { texte: 'Ce n’est pas la taille de la lumière qui compte, mais l’intensité de ce qu’elle éclaire.', auteur: 'Anonyme', theme: 'passion' },
-    { texte: "Travaille en silence, laisse ton succès faire du bruit.", auteur: 'Frank Ocean', theme: 'passion' },
-    { texte: "L’ambition est le premier pas vers le succès. La seconde, c’est l’action.", auteur: 'Anonyme', theme: 'passion' },
+    // Lenteur, ville, introspection
+    { texte: "Marcher lentement, c’est parfois avancer plus profondément.", auteur: 'Anonyme', theme: 'lenteur' },
+    { texte: "La ville est un poème à lire avec les écouteurs aux oreilles.", auteur: 'Anonyme', theme: 'ville' },
+    { texte: "Chaque coin de rue a une chanson à murmurer à celles qui savent écouter.", auteur: 'Anonyme', theme: 'ville' },
 
-    // Lune, beauté intérieure
-    { texte: 'La Lune est témoin de nos silences, de nos espoirs et de nos renaissances.', auteur: 'Anonyme', theme: 'lune' },
-    { texte: 'La beauté commence au moment où vous décidez d’être vous-même.', auteur: 'Coco Chanel', theme: 'lune' },
-    { texte: 'Même la nuit la plus sombre prendra fin et le soleil se lèvera.', auteur: 'Victor Hugo', theme: 'lune' },
-    { texte: "La Lune ne lutte jamais pour briller. Elle attend simplement son heure.", auteur: 'Anonyme', theme: 'lune' },
-    { texte: "La Lune est la preuve qu’on peut être entière tout en passant par des phases.", auteur: 'Anonyme', theme: 'lune' },
+    // Silence, thé, rituels calmes
+    { texte: "Le silence est un espace sacré où l’âme se ressource.", auteur: 'Anonyme', theme: 'silence' },
+    { texte: "Une tasse de thé partagée avec soi-même est un acte de paix intérieure.", auteur: 'Anonyme', theme: 'rituel' },
+    { texte: "Il n’y a pas de moment ordinaire lorsqu’on le savoure en pleine présence.", auteur: 'Anonyme', theme: 'rituel' },
 
-    // Photographie, sensibilité
-    { texte: 'La photographie, c’est une manière de ressentir, de toucher, d’aimer.', auteur: 'Aaron Siskind', theme: 'photo' },
-    { texte: 'Ce que la photo reproduit à l’infini n’a lieu qu’une fois.', auteur: 'Roland Barthes', theme: 'photo' },
-    { texte: 'Regarde le monde avec les yeux d’un artiste et chaque instant devient lumière.', auteur: 'Anonyme', theme: 'photo' },
-    { texte: "Une photographie, c’est un fragment de temps qui ne reviendra pas.", auteur: 'Martine Franck', theme: 'photo' },
-    { texte: "La caméra est un instrument qui enseigne aux gens comment voir sans appareil photo.", auteur: 'Dorothea Lange', theme: 'photo' },
+    // Création, inspiration
+    { texte: "Créer, c’est traduire le monde intérieur en lumière.", auteur: 'Anonyme', theme: 'creation' },
+    { texte: "La créativité naît dans les moments d’écoute silencieuse.", auteur: 'Anonyme', theme: 'creation' },
+    { texte: "Les idées naissent souvent dans les interstices entre deux respirations.", auteur: 'Anonyme', theme: 'creation' },
+
+    // Yoga, équilibre, respiration
+    { texte: "Le corps s'exprime là où les mots ne suffisent plus.", auteur: 'Anonyme', theme: 'yoga' },
+    { texte: "Inspire calme, expire clarté.", auteur: 'Anonyme', theme: 'yoga' },
+    { texte: "La lenteur du mouvement révèle la profondeur de l’instant.", auteur: 'Anonyme', theme: 'yoga' }
 ];
+
 
 function getRandomCitation() {
     const idx = Math.floor(Math.random() * citations.length);
@@ -39,7 +36,6 @@ function getRandomCitation() {
 
 const GeoBlockedMessage: React.FC = () => {
     const [instagramUrl, setInstagramUrl] = useState('https://instagram.com/toncompte');
-    const { fontFamilyTitle } = useFontFamily();
     useEffect(() => {
         const fetchUrl = async () => {
             const { data } = await supabase
@@ -54,12 +50,12 @@ const GeoBlockedMessage: React.FC = () => {
     const citation = getRandomCitation();
     return (
         <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#111', color: '#fff', flexDirection: 'column', padding: 24, textAlign: 'center' }}>
-            <h1 className={`font-${fontFamilyTitle}`} style={{ fontSize: '2.2rem', marginBottom: 16 }}>Citation du jour :</h1>
+            <h1 style={{ fontSize: '2.2rem', marginBottom: 16 }}>🌙 Accès restreint</h1>
             <blockquote style={{ fontStyle: 'italic', fontSize: '1.3rem', margin: '2rem 0', maxWidth: 600 }}>
                 “{citation.texte}”<br />
                 <span style={{ display: 'block', marginTop: 12, fontWeight: 500, color: '#d4af37' }}>— {citation.auteur}</span>
             </blockquote>
-            {/* <p style={{ marginTop: 32, color: '#aaa' }}>Tu peux me retrouver sur Instagram : <a href={instagramUrl} style={{ color: '#d4af37', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer">@Instagram</a></p> */}
+            <p style={{ marginTop: 32, color: '#aaa' }}>Tu peux me retrouver sur Instagram : <a href={instagramUrl} style={{ color: '#d4af37', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer">@Instagram</a></p>
         </div>
     );
 };
