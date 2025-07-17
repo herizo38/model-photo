@@ -2,8 +2,10 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
 import PhotoGallery from '../components/PhotoGallery';
+import GeoBlockedMessage from '../components/GeoBlockedMessage';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import useGeoBlock from '../hooks/useGeoBlock';
 
 const Gallery: React.FC = () => {
   const { t } = useLanguage();
@@ -14,6 +16,7 @@ const Gallery: React.FC = () => {
   const [galleryDescColor, setGalleryDescColor] = useState('#d1d5db');
   const [galleryDescSize, setGalleryDescSize] = useState('1.25rem');
   const [loading, setLoading] = useState(true);
+  const { isBlocked, loadingBlock } = useGeoBlock();
 
   useEffect(() => {
     const fetchGallerySettings = async () => {
@@ -41,7 +44,11 @@ const Gallery: React.FC = () => {
       }
     };
     fetchGallerySettings();
+
   }, []);
+
+  if (loadingBlock) return null;
+  if (isBlocked) return <GeoBlockedMessage />;
 
   return (
     <div className="min-h-screen bg-black pt-20">
@@ -51,9 +58,9 @@ const Gallery: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            style={{ 
-              color: galleryTitleColor, 
-              fontSize: galleryTitleSize 
+            style={{
+              color: galleryTitleColor,
+              fontSize: galleryTitleSize
             }}
             className="font-bold mb-4"
           >
@@ -63,9 +70,9 @@ const Gallery: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            style={{ 
-              color: galleryDescColor, 
-              fontSize: galleryDescSize 
+            style={{
+              color: galleryDescColor,
+              fontSize: galleryDescSize
             }}
           >
             {loading ? '' : (galleryDesc || 'Explore my complete portfolio')}

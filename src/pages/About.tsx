@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Award, Camera, Heart, Star } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
+import GeoBlockedMessage from '../components/GeoBlockedMessage';
+import useGeoBlock from '../hooks/useGeoBlock';
 
 const About: React.FC = () => {
   const { t } = useLanguage();
@@ -14,6 +16,7 @@ const About: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [aboutStats, setAboutStats] = useState<{ id: string; icon: 'Camera' | 'Award' | 'Heart' | 'Star'; number: string; label: string; color?: string; size?: string }[]>([]);
   const [cta, setCta] = useState({ title: '', desc: '', btn: '', btnLink: '', btnColor: '#d4af37', titleSize: '2rem' });
+  const { isBlocked, loadingBlock } = useGeoBlock();
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -63,7 +66,11 @@ const About: React.FC = () => {
       }
     };
     fetchContent();
+
   }, []);
+
+  if (loadingBlock) return null;
+  if (isBlocked) return <GeoBlockedMessage />;
 
   return (
     <div className="min-h-screen bg-black pt-20">

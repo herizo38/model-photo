@@ -3,12 +3,15 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
 import ContactForm from '../components/ContactForm';
 import { supabase } from '../lib/supabase';
+import GeoBlockedMessage from '../components/GeoBlockedMessage';
+import useGeoBlock from '../hooks/useGeoBlock';
 
 const Contact: React.FC = () => {
   const { t } = useLanguage();
   const [contactText, setContactText] = useState('');
   const [loading, setLoading] = useState(true);
   const [showContactForm, setShowContactForm] = useState(true);
+  const { isBlocked, loadingBlock } = useGeoBlock();
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -38,6 +41,9 @@ const Contact: React.FC = () => {
     };
     fetchShowContactForm();
   }, []);
+
+  if (loadingBlock) return null;
+  if (isBlocked) return <GeoBlockedMessage />;
 
   return (
     <div className="min-h-screen bg-black pt-20">
