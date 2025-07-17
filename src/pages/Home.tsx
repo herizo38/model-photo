@@ -7,10 +7,12 @@ import ContactForm from '../components/ContactForm';
 import GeoBlockedMessage from '../components/GeoBlockedMessage';
 import { supabase } from '../lib/supabase';
 import useGeoBlock from '../hooks/useGeoBlock';
+import { useFontFamily } from '../contexts/LanguageContext';
 
 const Home: React.FC = () => {
   const [showContactForm, setShowContactForm] = useState(true);
   const { isBlocked, loadingBlock } = useGeoBlock();
+  const { fontFamilyText } = useFontFamily();
 
   useEffect(() => {
     const fetchShowContactForm = async () => {
@@ -28,7 +30,7 @@ const Home: React.FC = () => {
   if (isBlocked) return <GeoBlockedMessage />;
 
   return (
-    <div>
+    <div className={`font-${fontFamilyText}`}>
       <Hero />
       <PresentationSection />
       <FeaturedPhotos />

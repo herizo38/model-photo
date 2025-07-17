@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Bodoni+Moda:wght@400;700&family=Cormorant+Garamond:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;700&family=Lora:wght@400;700&family=Roboto:wght@400;700&family=EB+Garamond:wght@400;700&family=Oswald:wght@400;700&family=Raleway:wght@400;700&family=DM+Serif+Display:wght@400;700&family=Nunito:wght@400;700&family=Quicksand:wght@400;700&family=Inter:wght@400;700&family=Space+Grotesk:wght@400;700&family=Sora:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -29,7 +29,7 @@ const GeneralSettings: React.FC = () => {
       const { data } = await supabase
         .from('settings')
         .select('key, value')
-        .in('key', ['site_title', 'site_description', 'site_logo', 'primary_color', 'button_color', 'background_color', 'text_color', 'font_family_title', 'font_family_text','geoblock_instagram_url']);
+        .in('key', ['site_title', 'site_description', 'site_logo', 'primary_color', 'button_color', 'background_color', 'text_color', 'font_family_title', 'font_family_text', 'geoblock_instagram_url']);
 
       if (data) {
         setSiteTitle(data.find(row => row.key === 'site_title')?.value || '');
@@ -349,9 +349,21 @@ const GeneralSettings: React.FC = () => {
             className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
           >
             <option value="playfair">Playfair Display</option>
-            <option value="didot">Didot</option>
+            <option value="didot">Merriweather</option>
             <option value="bodoni">Bodoni Moda</option>
             <option value="cormorant">Cormorant Garamond</option>
+            <option value="montserrat">Montserrat</option>
+            <option value="lora">Lora</option>
+            <option value="roboto">Roboto</option>
+            <option value="ebgaramond">EB Garamond</option>
+            <option value="oswald">Oswald</option>
+            <option value="raleway">Raleway</option>
+            <option value="dmserif">DM Serif Display</option>
+            <option value="nunito">Nunito</option>
+            <option value="quicksand">Quicksand</option>
+            <option value="inter">Inter</option>
+            <option value="spacegrotesk">Space Grotesk</option>
+            <option value="sora">Sora</option>
           </select>
         </div>
         <div>
@@ -362,9 +374,21 @@ const GeneralSettings: React.FC = () => {
             className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
           >
             <option value="playfair">Playfair Display</option>
-            <option value="didot">Didot</option>
+            <option value="didot">Merriweather</option>
             <option value="bodoni">Bodoni Moda</option>
             <option value="cormorant">Cormorant Garamond</option>
+            <option value="montserrat">Montserrat</option>
+            <option value="lora">Lora</option>
+            <option value="roboto">Roboto</option>
+            <option value="ebgaramond">EB Garamond</option>
+            <option value="oswald">Oswald</option>
+            <option value="raleway">Raleway</option>
+            <option value="dmserif">DM Serif Display</option>
+            <option value="nunito">Nunito</option>
+            <option value="quicksand">Quicksand</option>
+            <option value="inter">Inter</option>
+            <option value="spacegrotesk">Space Grotesk</option>
+            <option value="sora">Sora</option>
           </select>
         </div>
       </div>
