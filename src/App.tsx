@@ -11,6 +11,7 @@ import Admin from './pages/Admin';
 import { useEffect } from 'react';
 import { supabase } from './lib/supabase';
 import useGeoBlock from './hooks/useGeoBlock';
+import { Analytics } from '@vercel/analytics/react';
 
 const FontClassApplier: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { fontFamilyText, loading } = useFontFamily();
@@ -65,6 +66,7 @@ function App() {
                     },
                   }}
                 />
+                <Analytics />
               </div>
             </Router>
           </LanguageProvider>
