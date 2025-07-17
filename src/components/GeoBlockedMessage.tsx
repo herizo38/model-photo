@@ -36,8 +36,11 @@ const themeToPixabayQuery: Record<string, string> = {
     yoga: 'gentle yoga',
 };
 
-function getRandomCitation() {
-    const idx = Math.floor(Math.random() * citations.length);
+function getDailyCitation() {
+    const today = new Date();
+    const daySeed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+    // Utiliser un hash simple pour obtenir un index stable chaque jour
+    const idx = daySeed % citations.length;
     return citations[idx];
 }
 
@@ -46,7 +49,7 @@ const GeoBlockedMessage: React.FC = () => {
     const [siteTitle, setSiteTitle] = useState('');
     const [imageUrl, setImageUrl] = useState('');
     const [imageLoaded, setImageLoaded] = useState(false);
-    const citation = getRandomCitation();
+    const citation = getDailyCitation();
 
     useEffect(() => {
         const fetchUrl = async () => {
