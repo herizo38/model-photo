@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 import { supabase } from './lib/supabase';
 import useGeoBlock from './hooks/useGeoBlock';
 import { Analytics } from '@vercel/analytics/react';
+import GeoBlockedMessage from './components/GeoBlockedMessage';
 
 const FontClassApplier: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { fontFamilyText, loading } = useFontFamily();
@@ -25,7 +26,7 @@ const FontClassApplier: React.FC<{ children: React.ReactNode }> = ({ children })
 };
 
 function App() {
-  useGeoBlock();
+  const { isBlocked, loadingBlock } = useGeoBlock();
   useEffect(() => {
     const fetchColors = async () => {
       const { data } = await supabase
@@ -39,6 +40,8 @@ function App() {
     };
     fetchColors();
   }, []);
+  if (loadingBlock) return null;
+  if (isBlocked) return <GeoBlockedMessage />;
   return (
     <ColorProvider>
       <FontFamilyProvider>

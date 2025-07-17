@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Award, Camera, Heart, Star } from 'lucide-react';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage, useFontFamily } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
 import GeoBlockedMessage from '../components/GeoBlockedMessage';
 import useGeoBlock from '../hooks/useGeoBlock';
 
 const About: React.FC = () => {
   const { t } = useLanguage();
+  const { fontFamilyTitle } = useFontFamily();
   const [aboutText, setAboutText] = useState('');
   const [bioLink, setBioLink] = useState('');
   const [journey, setJourney] = useState('');
@@ -80,7 +81,7 @@ const About: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-4xl md:text-6xl font-bold text-white mb-4"
+            className={`text-4xl md:text-6xl font-bold text-white mb-4 font-${fontFamilyTitle}`}
           >
             {t('about')}
           </motion.h1>

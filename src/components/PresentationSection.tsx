@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabase';
+import { useFontFamily } from '../contexts/LanguageContext';
 
 const PresentationSection: React.FC = () => {
   const [presentation, setPresentation] = useState({
@@ -27,6 +28,7 @@ const PresentationSection: React.FC = () => {
     visible: true
   });
   const [loading, setLoading] = useState(true);
+  const { fontFamilyTitle } = useFontFamily();
 
   useEffect(() => {
     const fetchPresentationSettings = async () => {
@@ -134,7 +136,7 @@ const PresentationSection: React.FC = () => {
                 color: presentation.titleColor,
                 fontSize: presentation.titleSize
               }}
-              className="font-bold mb-6"
+              className={`font-bold mb-6 font-${fontFamilyTitle}`}
             >
               {presentation.title}
             </motion.h2>
@@ -150,7 +152,7 @@ const PresentationSection: React.FC = () => {
                 color: presentation.subtitleColor,
                 fontSize: presentation.subtitleSize
               }}
-              className="font-semibold mb-6"
+              className={`font-semibold mb-6 font-${fontFamilyTitle}`}
             >
               {presentation.subtitle}
             </motion.h3>

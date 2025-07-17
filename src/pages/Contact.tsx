@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage, useFontFamily } from '../contexts/LanguageContext';
 import ContactForm from '../components/ContactForm';
 import { supabase } from '../lib/supabase';
 import GeoBlockedMessage from '../components/GeoBlockedMessage';
@@ -8,6 +8,7 @@ import useGeoBlock from '../hooks/useGeoBlock';
 
 const Contact: React.FC = () => {
   const { t } = useLanguage();
+  const { fontFamilyTitle } = useFontFamily();
   const [contactText, setContactText] = useState('');
   const [loading, setLoading] = useState(true);
   const [showContactForm, setShowContactForm] = useState(true);
@@ -53,7 +54,7 @@ const Contact: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-4xl md:text-6xl font-bold text-white mb-4"
+            className={`text-4xl md:text-6xl font-bold text-white mb-4 font-${fontFamilyTitle}`}
           >
             {t('contact')}
           </motion.h1>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useFontFamily } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
 import SocialMediaHero from './SocialMediaHero';
 // import { Link } from 'react-router-dom';
@@ -17,6 +18,7 @@ interface HeroSlide {
 
 const Hero: React.FC = () => {
   const { t } = useLanguage();
+  const { fontFamilyTitle } = useFontFamily();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [heroTitle, setHeroTitle] = useState('');
   const [heroSubtitle, setHeroSubtitle] = useState('');
@@ -158,7 +160,7 @@ const Hero: React.FC = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="text-6xl md:text-8xl font-bold mb-4"
+            className={`text-6xl md:text-8xl font-bold mb-4 font-${fontFamilyTitle}`}
           >
             {loading ? '...' : (heroTitle || t('hero_title'))}
           </motion.h1>

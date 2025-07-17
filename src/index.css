@@ -2,12 +2,4 @@
 @tailwind components;
 @tailwind utilities;
 
-h1, h2, h3 {
-  @apply font-playfair;
-}
-h4, h5, h6 {
-  @apply font-bodoni;
-}
-body, p {
-  @apply font-cormorant;
-}
+/* Suppression des polices fixes sur h1, h2, h3, h4, h5, h6, body, p pour laisser la classe dynamique agir */
