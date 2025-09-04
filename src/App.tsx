@@ -8,6 +8,8 @@ import Gallery from './pages/Gallery';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
+import ChatPage from './pages/ChatPage';
+import AdminChatPage from './pages/AdminChatPage';
 import { useEffect } from 'react';
 import { supabase } from './lib/supabase';
 import useGeoBlock from './hooks/useGeoBlock';
@@ -57,6 +59,8 @@ function App() {
                     <Route path="/about" element={<About />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/admin" element={<Admin />} />
+                    <Route path="/chat" element={<ChatPage />} />
+                    <Route path="/admin/chat" element={<AdminChatPage />} />
                   </Routes>
                 </main>
                 <Toaster
