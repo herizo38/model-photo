@@ -18,6 +18,7 @@ const Navigation: React.FC = () => {
     about: true,
     contact: true,
     admin: true,
+    chat: true,
   });
 
   useEffect(() => {
@@ -50,6 +51,7 @@ const Navigation: React.FC = () => {
           'show_nav_about',
           'show_nav_contact',
           'show_nav_admin',
+          'show_nav_chat',
         ]);
       setNavVisibility({
         home: data?.find(row => row.key === 'show_nav_home')?.value !== 'false',
@@ -57,6 +59,7 @@ const Navigation: React.FC = () => {
         about: data?.find(row => row.key === 'show_nav_about')?.value !== 'false',
         contact: data?.find(row => row.key === 'show_nav_contact')?.value !== 'false',
         admin: data?.find(row => row.key === 'show_nav_admin')?.value !== 'false',
+        chat: data?.find(row => row.key === 'show_nav_chat')?.value !== 'false',
       });
     };
     fetchNavSettings();
@@ -68,6 +71,7 @@ const Navigation: React.FC = () => {
     { name: 'À propos', href: '/about', key: 'about' },
     { name: 'Contact', href: '/contact', key: 'contact' },
     { name: 'Admin', href: '/admin', key: 'admin' },
+    { name: 'Chat', href: '/chat', key: 'chat' },
   ];
 
   // Filtrer les liens selon navVisibility
