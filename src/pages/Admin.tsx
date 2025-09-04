@@ -18,7 +18,7 @@ import CategoryManager from '../components/admin/CategoryManager';
 import Analytics from '../components/admin/Analytics';
 import Settings from '../components/admin/Settings';
 import ContactSettings from '../components/admin/pages/ContactSettings';
-import AdminChat from '../components/admin/AdminChat'; // Import AdminChat
+import AdminChat from '../components/admin/AdminChat'; // Corrected import path
 import { toast } from 'react-hot-toast';
 
 const Admin: React.FC = () => {
