@@ -6,7 +6,8 @@ import {
   BarChart3,
   Settings as SettingsIcon,
   LogOut,
-  Shield
+  Shield,
+  MessageCircle, // Changed icon for chat
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import AdminLogin from '../components/admin/AdminLogin';
@@ -17,6 +18,7 @@ import CategoryManager from '../components/admin/CategoryManager';
 import Analytics from '../components/admin/Analytics';
 import Settings from '../components/admin/Settings';
 import ContactSettings from '../components/admin/pages/ContactSettings';
+import AdminChat from '../components/admin/AdminChat'; // Import AdminChat
 import { toast } from 'react-hot-toast';
 
 const Admin: React.FC = () => {
@@ -49,6 +51,7 @@ const Admin: React.FC = () => {
     { id: 'photos', name: 'Photos', icon: Camera },
     { id: 'categories', name: 'Catégories', icon: SettingsIcon },
     { id: 'messages', name: 'Messages', icon: MessageSquare },
+    { id: 'chat', name: 'Chat', icon: MessageCircle }, // Added Chat tab
     { id: 'contact', name: 'Contact', icon: MessageSquare },
     { id: 'analytics', name: 'Statistiques', icon: BarChart3 },
     { id: 'settings', name: 'Paramètres', icon: SettingsIcon },
@@ -64,6 +67,8 @@ const Admin: React.FC = () => {
         return <CategoryManager />;
       case 'messages':
         return <ContactMessages />;
+      case 'chat': // Added case for chat
+        return <AdminChat />;
       case 'contact':
         return <ContactSettings />;
       case 'analytics':
